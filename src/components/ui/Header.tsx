@@ -4,9 +4,10 @@ import Link from "next/link"
 import { Button } from "./button"
 import { ModeToggle } from "../DarkmodeToggle"
 import LogOutButton from "./LogOutButton"
+import { getUser } from "@/auth/server"
 
-function Header() {
-   const user = null
+async function Header() {
+   const user = await getUser()
    return (
       <header className="flex items-center justify-between w-full max-w-4xl px-4 py-4 mx-auto text-slate-200 dark:text-slate-200 bg-popover dark:bg-slate-900 border-b border-slate-700 dark:border-slate-700" style={{ boxShadow: shadows.lg }}>
          <Link href="/">Home</Link>

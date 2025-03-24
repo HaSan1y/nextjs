@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { logOutAction } from '@/actions/users'
 
 function LogOutButton() {
    const toast = useToast()
@@ -12,9 +13,11 @@ function LogOutButton() {
    const [loading, setLoading] = useState(false)
    const handleClick = async () => {
       setLoading(true)
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate a delay for the logout process
+
+      // await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate a delay for the logout process
+      const { errorMessage } = await logOutAction()
       // await fetch('/api/auth/logout', { method: 'POST' })
-      const errorMessage = null // Replace with actual error message if any
+      // Replace with actual error message if any
       if (!errorMessage) {
          toast.toast({
             title: 'Logged out',

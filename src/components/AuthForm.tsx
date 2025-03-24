@@ -9,6 +9,7 @@ import { Button } from "./ui/button"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
 import { Input } from "./ui/input"
+import { loginAction, signUpAction } from "@/actions/users"
 // import { loginAction, signUpAction } from "@/actions/users";
 
 type Props = {
@@ -49,15 +50,27 @@ function AuthForm({ type }: Props) {
          // } catch (error) {
          //    console.error(error)
          // }
-         let errorMessage;
+         let errorMessage, title, description;
          if (isLoginForm) {
-            // errorMessage = (await loginAction(email, password)).errorMessage;
+            errorMessage = (await loginAction(email, password)).errorMessage;
+            title = 'Login successful';
+            description = 'You have successfully logged in.';
          } else {
-            // errorMessage = (await signUpAction(email, password)).errorMessage;
+            errorMessage = (await signUpAction(email, password)).errorMessage;
+            title = 'Registration successful';
+            description = 'You have successfully registered.';
          }
-
+         //signupaction = actions/users.ts
          if (!errorMessage) {
-            router.replace(`/?toastType=${type}`);
+            // router.replace(`/?toastType=${type}`);
+            toast({
+               title,
+               description,
+               variant: 'success',
+            })
+            // router.push('/')  // redirect to home page, but user can go back to login page using back button
+            router.replace('/') // redirect to home page, but user can't go back to login page using back button
+            // router.refresh()
          } else {
             toast({
                title: "Error",

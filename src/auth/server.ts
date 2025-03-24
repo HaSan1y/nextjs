@@ -6,7 +6,7 @@ export async function createClient() {
 
    // Create a server's supabase client with newly configured cookie,
    // which could be used to maintain user's session
-   return createServerClient(
+   const client = createServerClient(
       process.env.SUPABASE_URL || '',
       process.env.SUPABASE_ANON_KEY || '',
       {
@@ -26,4 +26,16 @@ export async function createClient() {
          },
       }
    )
+   return client
+}
+
+export async function getUser() {
+   const { auth } = await createClient()
+   const userObject = await auth.getUser()
+   if (userObject.error) {
+      console.log('Error getting user session:', userObject.error)
+
+      return null
+   }
+   return userObject.data.user || null
 }
