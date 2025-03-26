@@ -1,47 +1,52 @@
-// import { getUser } from "@/auth/server";
+import { getUser } from "@/auth/server";
 // import AskAIButton from "@/components/AskAIButton";
 // import NewNoteButton from "@/components/NewNoteButton";
 // import NoteTextInput from "@/components/NoteTextInput";
 // import HomeToast from "@/components/HomeToast";
-// import { prisma } from "@/db/prisma";
+import { prisma } from "@/db/prisma";
 
-// type Props = {
-//    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-// };
+type Props = {
+   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
-// async function HomePage({ searchParams }: Props) {
-//    const noteIdParam = (await searchParams).noteId;
-//    const user = await getUser();
+async function HomePage({ searchParams }: Props) {
+   try {
+      const noteIdParam = (await searchParams).noteId;
+      const user = await getUser();
 
-//    const noteId = Array.isArray(noteIdParam)
-//       ? noteIdParam![0]
-//       : noteIdParam || "";
+      if (!user) {
+         return <div>User not authenticated. Please log in.</div>;
+      }
 
-//    const note = await prisma.note.findUnique({
-//       where: { id: noteId, authorId: user?.id },
-//    });
+      const noteId = Array.isArray(noteIdParam)
+         ? noteIdParam![0]
+         : noteIdParam || "";
 
-//    return (
-//       <div className="flex h-full flex-col items-center gap-4">
-//          <div className="flex w-full max-w-4xl justify-end gap-2">
-//             <AskAIButton user={user} />
-//             <NewNoteButton user={user} />
-//          </div>
+      const note = await prisma.note.findUnique({
+         where: { id: noteId, authorId: user.id },
+      });
 
-//          <NoteTextInput noteId={noteId} startingNoteText={note?.text || ""} />
+      if (!note) {
+         console.error("Note not found or invalid note ID");
+         return <div>Note not found or invalid note ID.</div>;
+      }
 
-//          <HomeToast />
-//       </div>
-//    );
-// }
+      return (
+         <div className="flex h-full flex-col items-center gap-4">
+            <h1 className="text-2xl font-bold">Welcome, {user.email}</h1>
+            <p className="text-lg">Here are your notes:</p>
+            {/* <NewNoteButton /> */}
+            {/* <NoteTextInput /> */}
+            {/* <AskAIButton /> */}
+            {/* <HomeToast /> */}
+            Note content: {note.text}
 
-// export default HomePage;
-import React from 'react'
-
-function page() {
-   return (
-      <div>page</div>
-   )
+         </div>
+      );
+   } catch (error) {
+      console.error("An error occurred:", error);
+      return <div>An unexpected error occurred. Please try again later.</div>;
+   }
 }
 
-export default page
+export default HomePage;

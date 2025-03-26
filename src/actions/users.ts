@@ -1,8 +1,8 @@
 "use server"
 
-// const { createClient } = await import('@/utils/supabase-server')
 import { createClient } from "@/auth/server"
-import { handleErrors } from "@/lib/utils"
+import { prisma } from "@/db/prisma"
+// import { handleErrors } from "@/lib/utils"
 
 export const loginAction = async (email: string, password: string) => {
    try {
@@ -16,14 +16,12 @@ export const loginAction = async (email: string, password: string) => {
       })
       if (error) throw error
 
-      // const userID = data.user?.id
-      // if (!userID) {
-      //    throw new Error('User ID not found')
-      // }
-      return { errorMessage: null };
+      return { successMessage: 'Logged in successfully' };
    } catch (error) {
-      console.error('Error validating input:', error)
-      return { errorMessage: 'Email and password are required' }
+      if (error instanceof Error) {
+         return { errorMessage: error.message }
+      }
+      return { errorMessage: 'Error validating input:' }
    }
 }
 
@@ -34,9 +32,11 @@ export const logOutAction = async () => {
       const { error } = await auth.signOut();
       if (error) throw error;
 
-      return { errorMessage: null };
+      return { successMessage: 'Logged out successfully' };
    } catch (error) {
-      console.error('Error :', error)
+      if (error instanceof Error) {
+         return { errorMessage: error.message };
+      }
       return { errorMessage: 'Error logging out' }
    }
 };
@@ -58,9 +58,16 @@ export const signUpAction = async (email: string, password: string) => {
       if (!userID) {
          throw new Error('signup: User ID not found')
       }
-      return { errorMessage: null };
+      await prisma.user.create({
+         data: { id: userID, email }
+      })
+
+      return { successMessage: 'User created successfully' };
    } catch (error) {
-      console.error('Error signup:', error)
+      if (error instanceof Error) {
+         console.error('Error in signupAction:', error)
+         return { errorMessage: error.message }
+      }
       return { errorMessage: 'Error signup' }
    }
 }

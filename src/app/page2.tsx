@@ -105,18 +105,17 @@ export default function Home() {
     if (error) console.error('Error adding task:', error);
     if (data) console.error('Task added:', data);
   }
+  // {/* <Head> */}
+  {/* <title>HTMX CRUD with Supabase</title> */ }
+  {/* <title>nextjs with Supabase</title> */ }
+  {/* eslint-disable-next-line @next/next/no-sync-scripts */ }
+  {/* <Script src="" strategy="afterInteractive" /> either async or this way*/ }
+  {/* <script src="https://unpkg.com/htmx.org@1.6.1" async></script> */ }
+  {/* </Head> */ }
   return (
     <>
-      <Head>
-        {/* <title>HTMX CRUD with Supabase</title> */}
-        <title>nextjs with Supabase</title>
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        {/* <Script src="" strategy="afterInteractive" /> either async or this way*/}
-        {/* <script src="https://unpkg.com/htmx.org@1.6.1" async></script> */}
-      </Head>
       <main className="transparent max-w-md m-auto">
         <div className="container mx-auto p-2 border-2">
-          {/* <h1>HTMX CRUD with Supabase</h1> */}
           <h1 className="text-2xl font-bold text-center">NextJS with Supabase</h1>
 
           <form onSubmit={addTask} className="flex justify-evenly mt-2 mb-3 px-5 gap-1">

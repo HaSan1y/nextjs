@@ -7,12 +7,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
    matcher: [
-
       '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
    ],
 }
-
-
 
 export async function updateSession(request: NextRequest) {
    let supabaseResponse = NextResponse.next({
@@ -20,8 +17,8 @@ export async function updateSession(request: NextRequest) {
    })
 
    const supabase = createServerClient(
-      process.env.SUPABASE_URL || '',
-      process.env.SUPABASE_ANON_KEY || '',
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!,
       {
          cookies: {
             getAll() {
