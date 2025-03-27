@@ -28,6 +28,7 @@ function AuthForm({ type }: Props) {
          const email = formData.get('email') as string
          const password = formData.get('password') as string
          let errorMessage: string | null = null;
+
          if (isLoginForm) {
             const result = await loginAction(email, password);
             errorMessage = result?.errorMessage || null;

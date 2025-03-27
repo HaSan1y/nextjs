@@ -10,17 +10,30 @@ generator client {
 model Note {
    id        String   @id @default(uuid())
    text      String
-   author    User?    @relation(fields: [authorId], references: [id])
+   author    User     @relation(fields: [authorId], references: [id])
    authorId  String
    createdAt DateTime @default(now())
    updatedAt DateTime @default(now()) @updatedAt
 }
 
 model User {
-   id    String @id @default(uuid())
-   email String @unique
-
+   id        String   @id @default(uuid())
+   email     String   @unique
+   note      Note[]
+   tasks     Tasks[]
    createdAt DateTime @default(now())
    updatedAt DateTime @default(now()) @updatedAt
-   Note      Note[]
+}
+
+model Tasks {
+   id         String   @id @default(uuid())
+   user       User     @relation(fields: [user_Id], references: [id])
+   user_Id    String
+   title      String
+   first_name String
+   last_name  String
+   email      String
+   phone      String
+   createdAt  DateTime @default(now())
+   updatedAt  DateTime @default(now()) @updatedAt
 }

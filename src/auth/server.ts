@@ -1,9 +1,9 @@
 "use server"
-import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
 
 export async function createClient() {
-   const cookieStore = await cookies()
+   const cookieStore = await cookies();
 
    const client = createServerClient(
       process.env.SUPABASE_URL!,
@@ -11,31 +11,29 @@ export async function createClient() {
       {
          cookies: {
             getAll() {
-               return cookieStore.getAll()
+               return cookieStore.getAll();
             },
             setAll(cookiesToSet) {
                try {
                   cookiesToSet.forEach(({ name, value, options }) =>
-                     cookieStore.set(name, value, options)
-                  )
-               } catch {
-
-               }
+                     cookieStore.set(name, value, options),
+                  );
+               } catch { }
             },
          },
-      }
-   )
-   return client
+      },
+   );
+
+   return client;
 }
 
 export async function getUser() {
-   const { auth } = await createClient()
-
-   const userSession = await auth.getUser()
-   if (!userSession.data.user || userSession.error) {
-      // console.log('error', userSession)
-      return null
+   const { auth } = await createClient();
+   const userObject = await auth.getUser();
+   if (!userObject || userObject.data.user === null || auth.getSession() === null || userObject.error) {
+      console.log('err userget:', userObject.error);
+      return null;
    }
 
-   return userSession.data.user
+   return userObject.data.user;
 }

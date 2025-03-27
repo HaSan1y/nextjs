@@ -10,14 +10,23 @@ export const loginAction = async (email: string, password: string) => {
          throw new Error('Email and password are required')
       }
       const { auth } = await createClient()
-      const { error } = await auth.signInWithPassword({
+      const { data, error } = await auth.signInWithPassword({
          email,
          password
       })
-      if (error) throw error
+      console.log("Login response:", data, error);
+      if (error) {
+         console.error("Supabase login error:", error);
+         throw new Error(error.message || "Login failed");
+      }
+
+      if (!data || !data.user) {
+         throw new Error("Invalid response from server");
+      }
 
       return { successMessage: 'Logged in successfully' };
    } catch (error) {
+      console.error("Error in loginAction:", error);
       if (error instanceof Error) {
          return { errorMessage: error.message }
       }

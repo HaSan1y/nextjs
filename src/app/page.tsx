@@ -1,3 +1,4 @@
+
 import { getUser } from "@/auth/server";
 // import AskAIButton from "@/components/AskAIButton";
 // import NewNoteButton from "@/components/NewNoteButton";
@@ -9,13 +10,14 @@ type Props = {
    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-async function HomePage({ searchParams }: Props) {
+export default async function HomePage({ searchParams }: Props) {
    try {
       const noteIdParam = (await searchParams).noteId;
       const user = await getUser();
 
       if (!user) {
-         return <div>User not authenticated. Please log in.</div>;
+         console.log("User not authenticated or session expired");
+         return <div>User not authenticated or session expired. Please log in or confirm your email.</div>
       }
 
       const noteId = Array.isArray(noteIdParam)
@@ -40,13 +42,12 @@ async function HomePage({ searchParams }: Props) {
             {/* <AskAIButton /> */}
             {/* <HomeToast /> */}
             Note content: {note.text}
-
+            {/* <Page2 /> */}
          </div>
       );
    } catch (error) {
-      console.error("An error occurred:", error);
+      console.log("An error occurred:", error);
       return <div>An unexpected error occurred. Please try again later.</div>;
    }
 }
 
-export default HomePage;

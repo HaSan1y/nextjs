@@ -10,13 +10,17 @@ export async function POST(request: NextRequest) {
          authorId: userId,
          text: "",
       },
+
    });
+
    if (!id) {
       return NextResponse.json({
          error: "Failed to create a new note",
       });
    }
+
    return NextResponse.json({
       noteId: id,
+
    });
 }

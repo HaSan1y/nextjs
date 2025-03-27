@@ -48,7 +48,7 @@ function LogOutButton() {
             <span>Log out</span>
          )}
       </Button>
-   )
+   );
 }
 
 export default LogOutButton
