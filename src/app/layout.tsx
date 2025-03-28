@@ -4,6 +4,9 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
 import { getUser } from "@/auth/server";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/x";
+import NoteProvider from "@/providers/NoteProvider";
 
 
 export const metadata: Metadata = {
@@ -28,13 +31,18 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col min-h-screen w-full bg-slate-800 dark:bg-slate-900 text-slate-200 dark:text-slate-200">
-            <Header user={user && user.email ? { email: user.email } : null} />
-            <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900">
-              {children}
-            </main>
-          </div>
-          <Toaster />
+          <NoteProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <div className="flex flex-col min-h-screen w-full bg-slate-800 dark:bg-slate-900 text-slate-200 dark:text-slate-200">
+                <Header user={user && user.email ? { email: user.email } : null} />
+                <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900">
+                  {children}
+                </main>
+              </div>
+            </SidebarProvider>
+            <Toaster />
+          </NoteProvider>
         </ThemeProvider>
       </body>
     </html>

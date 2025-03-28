@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 // import Head from 'next/head';
-
 import dotenv from 'dotenv';
+import { v4 as uuidv4 } from 'uuid';
 dotenv.config();
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -16,7 +16,7 @@ interface Task {
   title: string;
 }
 //([]) initialized as an empty array, <Task[]>generic typed as an array of Task objects
-export default function Home() {
+export default function PageTwo() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -35,7 +35,7 @@ export default function Home() {
         return;
       }
       // const userId = users ? users.id : null;
-      const { data, error } = await supabase.from('tasks').select('*').eq('user_id', user.id);
+      const { data, error } = await supabase.from('Tasks').select('*').eq('user_Id', user.id);
       if (error) console.error('Error fetching tasks:', error);
       else setTasks(data || []);
     } catch (error) {
@@ -49,12 +49,6 @@ export default function Home() {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const title = (form.elements.namedItem('title') as HTMLInputElement).value;
-
-    // const first_name = "John";
-    // const last_name = "Doe";
-    // const email = "john.doe@example.com";
-    // const phone = "123-456-7890";
-
     // useEffect(() => {
     //   supabase.auth.getSession().then(({ data: { session } }) => {
     //     if (!session) {
@@ -62,7 +56,6 @@ export default function Home() {
     //     }
     //   });
     // }, []);
-
     try {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) {
@@ -70,15 +63,19 @@ export default function Home() {
         return;
       }
       const user = session?.user;
-      // console.log("Session:", session);
-
       if (!user) {
-        console.error("User not authenticated#");
+        console.error("User not authenticated", session);
         return;
       }
-      const { data, error } = await supabase.from('tasks').insert([
+      // const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
+      //   email: 'hadirekt@gmail.com',
+      //   password: 'asdfghjk'
+      // });
+      const generatedId = uuidv4();
+      const { data, error } = await supabase.from('Tasks').insert([
         {
-          userId: user?.id,
+          id: generatedId,
+          user_Id: user?.id,
           title,
           first_name: "John",
           last_name: "Doe",
@@ -86,10 +83,9 @@ export default function Home() {
           phone: "123-456-7890",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-
         },
       ]);
-      if (error) console.error('Error adding task:', error);
+      if (error) { console.log('Error adding task:', error.message, 'User:', user, 'Task:', { title }, 'supabase:', supabase); }
       else {
         console.log('Task added:', data);
         loadTasks();
@@ -102,7 +98,7 @@ export default function Home() {
   // clear the form-inputs (not the modified js),same as pressing input type="reset"
   async function updateTask(id: number, title: string) {
     try {
-      const { error } = await supabase.from('tasks').update({ title }).eq('id', id);
+      const { error } = await supabase.from('Tasks').update({ title }).eq('id', id);
       if (error) console.error('Error updating task:', error);
       else loadTasks();
     } catch (error) {
@@ -112,7 +108,7 @@ export default function Home() {
 
   async function deleteTask(id: number) {
     try {
-      const { error } = await supabase.from('tasks').delete().eq('id', id);
+      const { error } = await supabase.from('Tasks').delete().eq('id', id);
       if (error) console.error('Error deleting task:', error);
       else loadTasks();
     } catch (error) {
@@ -122,6 +118,16 @@ export default function Home() {
 
   async function addDummy() {
     try {
+      // const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      // if (sessionError) {
+      //   console.error("Error fetching session:", sessionError);
+      //   return;
+      // }
+      // const user = session?.user;
+      // if (!user) {
+      //   console.error("User not authenticated", session);
+      //   return;
+      // }
       const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
         email: 'aaa@aa.aa',
         password: 'asdfghjk'
@@ -129,20 +135,23 @@ export default function Home() {
 
       if (authError) {
         console.error('Error signing in:', authError);
+
       } else {
+
+        const generatedId = uuidv4(); // Extract the generated UUID
         console.log('User signed in:', user);
 
         const { data: insertData, error: insertError } = await supabase
-          .from('tasks')
+          .from('Tasks')
           .insert([
             {
-              id: supabase.rpc('gen_random_uuid'),
-              user_id: user?.id,
+              id: generatedId,
+              user_Id: user?.id,
               title: 'Sample Task Title',
-              FirstName: 'John',
-              LastName: 'Doe',
-              Email: 'john.doe@example.com',
-              Phone: '123-456-7890'
+              first_name: 'John',
+              last_name: 'Doe',
+              email: 'john.doe@example.com',
+              phone: '123-456-7890'
             }
           ]);
 
@@ -158,22 +167,6 @@ export default function Home() {
     }
   }
 
-  async function signIn() {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        // const { data, error } = await supabase.auth.signUp({
-        email: 'aaa@aa.aa',
-        password: 'asdfghjk'
-      })
-
-      if (error) { console.error('Error adding task:', error); }
-      else {
-        console.log("User signed up:", data);
-      }
-    } catch (error) {
-      console.error("Error signing up:", error);
-    }
-  }
   // {/* <Head> */}
   {/* <title>HTMX CRUD with Supabase</title> */ }
   {/* <title>nextjs with Supabase</title> */ }
@@ -189,8 +182,7 @@ export default function Home() {
         <form onSubmit={addTask} className="flex justify-evenly mt-2 mb-3 px-5 gap-1">
           <input type="text" name="title" placeholder="New Task" required className="border-2 border-slate-800 text-black" />
           <button type="submit" className="border-2 border-dashed hover:border-slate-800">Add Task</button>
-          <button onClick={() => addDummy()} className="mt-3 w-1/2 border-2 border-dashed border-red-400 hover:text-neutral-700">addDummy</button>
-          <button onClick={() => signIn()} className="mt-3 w-1/2 border-2 border-dashed border-red-400 hover:text-neutral-700">signIn</button>
+          {/* <button onClick={() => addDummy()} className="mt-3 border-2 border-dashed border-red-400 hover:text-neutral-700">addDummy</button> */}
         </form>
 
         {loading ? (
@@ -212,4 +204,3 @@ export default function Home() {
     </main>
   );
 }
-

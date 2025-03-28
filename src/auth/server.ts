@@ -31,7 +31,10 @@ export async function getUser() {
    const { auth } = await createClient();
    const userObject = await auth.getUser();
    if (!userObject || userObject.data.user === null || auth.getSession() === null || userObject.error) {
-      console.log('err userget:', userObject.error);
+      // console.error("Error fetching user:", userObject.error);
+      // console.log("Session information:", await auth.getSession());
+
+      // console.log('err userget:', userObject.error);
       return null;
    }
 
