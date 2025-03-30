@@ -9,12 +9,12 @@ import {
    DialogHeader,
    DialogTitle,
    DialogTrigger,
-} from "@/components/ui/dialog";
+} from "./ui/dialog";
 import { Fragment, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "./ui/textarea";
 import { ArrowUpIcon } from "lucide-react";
-import { askAIAboutNotesAction } from "@/actions/notes";
+// import { askAIAboutNotesAction } from "@/actions/notes";
 import "@/styles/ai-response.css";
 
 type Props = {
@@ -24,7 +24,7 @@ type Props = {
 function AskAIButton({ user }: Props) {
    const router = useRouter();
 
-   const [isPending, startTransition] = useTransition();
+   const [isPending] = useTransition();
 
    const [open, setOpen] = useState(false);
    const [questionText, setQuestionText] = useState("");
@@ -67,12 +67,14 @@ function AskAIButton({ user }: Props) {
       setQuestionText("");
       setTimeout(scrollToBottom, 100);
 
-      startTransition(async () => {
-         const response = await askAIAboutNotesAction(newQuestions, responses);
-         setResponses((prev) => [...prev, response]);
+      // startTransition(async () => {
+      //    const response = await askAIAboutNotesAction(newQuestions, responses);
+      //    if (response) {
+      //       setResponses((prev) => [...prev, response]);
+      //    }
 
-         setTimeout(scrollToBottom, 100);
-      });
+      //    setTimeout(scrollToBottom, 100);
+      // });
    };
 
    const scrollToBottom = () => {

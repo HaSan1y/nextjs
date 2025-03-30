@@ -1,42 +1,55 @@
 "use server"
 import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 
-export async function createClient() {
-   const cookieStore = await cookies();
+export async function createCookieClient(cookieStore?: ReturnType<typeof cookies>) {
+   cookieStore = cookieStore ? Promise.resolve(cookieStore) : cookies();
+   // cookieStore = cookieStore || cookies();
+   // cookieStore = cookieStore || await cookies();
 
-   const client = createServerClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!,
+   return createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+
       {
          cookies: {
-            getAll() {
-               return cookieStore.getAll();
+            async get(name: string) {
+               // const store = await cookieStore;
+               // return store.get(name)?.value;
+               return (await cookieStore).get(name)?.value;
             },
-            setAll(cookiesToSet) {
-               try {
-                  cookiesToSet.forEach(({ name, value, options }) =>
-                     cookieStore.set(name, value, options),
-                  );
-               } catch { }
+            async remove(name: string, options: CookieOptions) {
+               // const store = await cookieStore;
+               // store.set(name, '', { ...options, maxAge: 0 })
+               (await cookieStore).set(name, '', { ...options, maxAge: 0 });
+            },
+            // async set(data) { console.log('xxset:', data); },
+            async set(name: string, value: string, options: CookieOptions) {
+               // const store = await cookieStore;
+               // store.set(name, value, options)
+               (await cookieStore).set(name, value, options);
+
             },
          },
-      },
+      }
    );
-
-   return client;
 }
 
-export async function getUser() {
-   const { auth } = await createClient();
-   const userObject = await auth.getUser();
-   if (!userObject || userObject.data.user === null || auth.getSession() === null || userObject.error) {
-      // console.error("Error fetching user:", userObject.error);
-      // console.log("Session information:", await auth.getSession());
+export async function getSession() {
+   const supabase = await createCookieClient();
+   // const supabase = createServerComponentClient({ cookies: () => Promise.resolve(cookies()) });
+   // const supabase = createServerComponentClient(({ cookies }));
+   // const supabase = createServerComponentClient({ cookies: await cookies() });
+   // const store = await cookieStore;
+   // const session = store?.get('session') ?? null;
+   const { data: { session } } = await supabase.auth.getSession();
+   return session;
+}
 
-      // console.log('err userget:', userObject.error);
-      return null;
-   }
-
-   return userObject.data.user;
+export async function createSupabaseClient() {
+   return createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+   );
 }

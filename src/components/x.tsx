@@ -1,4 +1,4 @@
-import { getUser } from "@/auth/server"
+// import { getUser } from "@/auth/server"
 import {
    Sidebar,
    SidebarContent,
@@ -9,9 +9,23 @@ import { prisma } from "@/db/prisma"
 import { Note } from "@prisma/client"
 import Link from "next/link"
 import SidebarGroupContent from "./SidebarGroupContent"
+import { getSession } from "@/auth/server";
+// import { cookies } from 'next/headers'
 
 export async function AppSidebar() {
-   const user = await getUser()
+   // const user = await getUser()
+   // const cookieStore = cookies()
+   // const supabase = await createClient(cookieStore);
+   // const { data: { user } } = await supabase.auth.getUser()
+   const session = await getSession();
+   if (!session) {
+      console.log('session', session);
+   }
+   const user = session && 'user' in session ? session.user : undefined;
+   if (!user) {
+      console.log('user', user);
+   }
+
    let notes: Note[] = []
    if (user) {
       notes = await prisma.note.findMany({

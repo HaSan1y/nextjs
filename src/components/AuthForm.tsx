@@ -1,6 +1,6 @@
 "use client"
 
-import { useToast } from "@/hooks/use-toast"
+// import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { CardContent, CardFooter } from "./ui/card"
 import { Label } from "./ui/label"
@@ -11,14 +11,12 @@ import Link from "next/link"
 import { Input } from "./ui/input"
 import { loginAction, signUpAction } from "@/actions/users"
 
-type Props = {
-   type: 'login' | 'signUp'
-}
+type Props = { type: 'login' | 'signUp' }
 
 function AuthForm({ type }: Props) {
    const isLoginForm = type === 'login'
    const router = useRouter()
-   const { toast } = useToast()
+   // const { toast } = useToast()
 
    const [isPending, setIsPending] = useState(false);
 
@@ -38,23 +36,23 @@ function AuthForm({ type }: Props) {
          }
          //signupaction = actions/users.ts
          if (!errorMessage) {
-            // router.push('/')  // redirect to home page, but user can go back to login page using back button
+            // router.push('/')  // to home page, but can go back using back button
             router.replace(`/?toastType=${type}`);
             // router.refresh()
          } else {
-            toast({
-               title: "Error",
-               description: errorMessage,
-               variant: "destructive",
-            });
+            // toast({
+            //    title: "Error",
+            //    description: errorMessage,
+            //    variant: "destructive",
+            // });
          }
       } catch (error) {
          console.error("An unexpected error occurred:", error);
-         toast({
-            title: "Error",
-            description: "An unexpected error occurred. Please try again.",
-            variant: "destructive",
-         });
+         // toast({
+         //    title: "Error",
+         //    description: "An unexpected error occurred. Please try again.",
+         //    variant: "destructive",
+         // });
       } finally {
          setIsPending(false);
       }

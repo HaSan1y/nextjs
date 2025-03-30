@@ -1,6 +1,6 @@
 "use server"
 
-import { createClient } from "@/auth/server"
+import { createCookieClient, createSupabaseClient } from "@/auth/server"
 import { prisma } from "@/db/prisma"
 // import { handleErrors } from "@/lib/utils"
 
@@ -9,15 +9,16 @@ export const loginAction = async (email: string, password: string) => {
       if (!email || !password) {
          throw new Error('Email and password are required')
       }
-      const { auth } = await createClient()
+      const { auth } = await createCookieClient()
       const { data, error } = await auth.signInWithPassword({
          email,
          password
       })
-      console.log("Login response:", data, error);
       if (error) {
-         console.error("Supabase login error:", error);
-         throw new Error(error.message || "Login failed");
+         // console.log("Login response:", data);
+         // return console.error("Supabase login error:", error);
+         // return { errorMessage: error.message }
+         throw new Error('err: ' + error.code || "Login failed");
       }
 
       if (!data || !data.user) {
@@ -36,7 +37,7 @@ export const loginAction = async (email: string, password: string) => {
 
 export const logOutAction = async () => {
    try {
-      const { auth } = await createClient();
+      const { auth } = await createCookieClient();
 
       const { error } = await auth.signOut();
       if (error) throw error;
@@ -56,7 +57,7 @@ export const signUpAction = async (email: string, password: string) => {
          throw new Error('signup: Email and password are required')
       }
 
-      const { auth } = await createClient()
+      const { auth } = await createCookieClient()
       const { data, error } = await auth.signUp({
          email,
          password
@@ -65,7 +66,7 @@ export const signUpAction = async (email: string, password: string) => {
 
       const userID = data.user?.id
       if (!userID) {
-         throw new Error('signup: User ID not found')
+         throw new Error('Unique constraint failed on the fields: (`email`)')
       }
       await prisma.user.create({
          data: { id: userID, email }
