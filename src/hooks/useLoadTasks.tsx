@@ -1,53 +1,64 @@
-import { createSupabaseClient } from '@/auth/server';
-import { Session } from '@supabase/supabase-js';
-import { useCallback, useState } from 'react';
-
-interface Task {
-   id: number;
+"use client";
+import { createSupabaseClient, getUser } from '../auth/server';
+// import type { User } from "@prisma/client";
+import { useCallback, useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+import { Tasks } from '@prisma/client';
+// import type { Tasks } from '@prisma/client';
+interface SimplifiedTask {
+   id: string;
    title: string;
 }
 
-function useLoadTasks(session: Session) {
-   const [tasks, setTasks] = useState<Task[]>([]);
-   const [loading, setLoading] = useState(false);
+function useLoadTasks() {
+   const [session, setSession] = useState<User | null>(null);
+   const [tasks, setTasks] = useState<Tasks[]>([]);
+   const [loading, setLoading] = useState(true);
 
-   // Your task loading logic here
-
-   // const loadTasks = useLoadTasks(session);
-   const loadTasks = useCallback(async () => {
-      // async function useLoadTasks() {
-      setLoading(true);
-      try {
-         if (!session) {
-            console.log('User not authenticated..');
-            return;
+   useEffect(() => {
+      const fetchUser = async () => {
+         const currentUser: User | null = await getUser();
+         if (!currentUser) {
+            /*  console.log("unauthenticated, session expired. Redirecting to login..");
+              //   window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;*/
+            return null;
+         } else {
+            setSession(currentUser);
          }
+      };
+      fetchUser();
+   }, []);
 
-         const user = session?.user;
-         // const session = await getSession();
-         // const { data: { session } } = await supabase.auth.getSession();
-         // if (!user) {
-         //   console.log('User not authenticated..');
-         //   return;
-         // }
-         // console.log(user);
-         // const userId = users ? users.id : null;
-         const supabase = await createSupabaseClient();
-         const { data, error } = await supabase.from('Tasks').select('*').eq('user_Id', user?.id);
-         if (error) return console.error('Error fetching tasks:', error);
-         else setTasks(data || []);
+
+   const loadTasks = useCallback(async () => {
+      try {
+         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/retriev-tasks?userId=${session?.id}`);
+         // const response = await fetch(`<span class="math-inline">\{process\.env\.NEXT\_PUBLIC\_BASE\_URL\}/api/retriev\-tasks?userId\=</span>{session?.id}`);
+         const task: Tasks = await response.json();
+
+         // const dnote = JSON.parse(JSON.stringify(task));
+         if (!task || task === null) {
+            console.error("task not found", task);
+            setTasks([]);
+         } else {
+            console.log(task, "serializedu tasks");
+            setTasks(Array.isArray(task) ? task : [task]);
+         }
+         console.log("fetched notes", task);
       } catch (error) {
-         console.error("Error loading tasks:", error);
+         console.error("Error fetching notes:", error);
       } finally {
          setLoading(false);
       }
    }, [session]);
 
-   return {
-      tasks,
-      loading,
-      loadTasks
-   };
+   useEffect(() => {
+      if (session) {
+         loadTasks();
+      }
+   }, [loadTasks, session]);
+
+   return { tasks, loading, loadTasks };
 }
 
 export default useLoadTasks;

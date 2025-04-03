@@ -1,0 +1,31 @@
+"use server";
+import { prisma } from "../../../db/prisma";
+import { NextRequest, NextResponse } from "next/server";
+// import type { Tasks } from "@prisma/client";
+
+export async function GET(request: NextRequest) {
+   const { searchParams } = new URL(request.url);
+   const userId: string | null = searchParams.get("userId");
+
+   if (!userId || userId === "null") {
+      return NextResponse.json({ error: "User ID, or Note ID is required" }, { status: 400 });
+   }
+   try {
+      const tasks = await prisma.tasks.findMany({
+         select: { id: true, title: true },
+      });
+
+      if (!tasks) {
+         return NextResponse.json({ tasks: null }, { status: 500 });
+      }
+      const serializedTasks = tasks.map(task => ({
+         id: task.id.toString(),
+         title: task.title.toString(),
+      }));
+
+      return NextResponse.json(serializedTasks, { status: 200 });
+   } catch (error) {
+      console.error(error);
+      return NextResponse.json({ tasks: null }, { status: 500 });
+   }
+}

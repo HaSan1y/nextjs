@@ -1,23 +1,125 @@
-
+"use client";
 // import { cookies } from 'next/headers' 
-import { prisma } from "@/db/prisma";
-import NoteTextInput from "@/components/NoteTextInput";
-import NewNoteButton from "@/components/NewNoteButton";
-import HomeToast from "@/components/HomeToast";
-import { createCookieClient, getSession } from "@/auth/server";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";  redirect 4 serverside
+// import { useSession } from "@/providers/SessionProvider";
 
-type Props = {
-   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
+import NoteTextInput from "../components/NoteTextInput";
+import NewNoteButton from "../components/NewNoteButton";
+import HomeToast from "../components/HomeToast";
+import { getUser } from "../auth/server";
+import { useEffect, useState, useContext } from "react";
+import type { User } from '@supabase/auth-helpers-nextjs';
+import type { Note } from "@prisma/client";
+import { useSearchParams } from "next/navigation";
 
-export default async function HomePage({ searchParams }: Props) {
+import { NoteProviderContext } from "../providers/NoteProvider";
 
-   const session = await getSession()
-   if (!session) {
-      console.log("unauthenticated, session expired. Redirecting to login..");
-      return redirect("/login"); //redirect outside of try, or only client components 
-   }
+// type Props = {
+//    searchParams?: {
+//       userId?: string;
+//       noteId?: string;
+//       task?: string;
+//       [key: string]: string | string[] | undefined;
+//    }
+// };
+
+export default function HomePage(/*{ searchParams }: Props*/) {
+
+   const searchParams = useSearchParams();
+   const [session, setSession] = useState<User | null>(null);
+   const [note, setNote] = useState<Note | null>(null);
+   const [loading, setLoading] = useState(true);
+   // const userId = searchParams?.get("userId");
+   const task = searchParams?.get("task");
+   const noteIdParam = searchParams?.get("noteId");
+   const noteId = Array.isArray(noteIdParam) ? noteIdParam[0] : noteIdParam || "";
+
+   const { noteText } = useContext(NoteProviderContext);
+   //receive note through parentcomponent providername from usecontext
+   console.log("noteText:", noteText);
+
+   useEffect(() => {
+      // Fetch user and redirect if necessary
+      const fetchUser = async () => {
+         console.log("fetching user");
+         try {
+            const currentUser: User | null = await getUser();
+            if (!currentUser || currentUser === null) {
+               console.log("unauthenticated, session expired. Redirecting to login..");
+               window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
+               // Handle the redirect logic on the client side here
+            } else {
+               console.log("user: also success");
+               setSession(currentUser);
+            }
+         } catch (error) {
+            console.error("Error fetching user:", error);
+         }
+         finally {
+            setLoading(false);
+         }
+      };
+      fetchUser();
+   }, []);
+
+   // useEffect(() => {
+   //    const fetchNotes = async () => {
+   //       try {
+   //          const response = await fetch('/api/fetch-unique-notes');
+   //          const data = await response.json();
+   //          setNote(note);
+   //          console.log("fetchd notes", data);
+   //       } catch (error) {
+   //          console.error("Error fetching notes:", error);
+   //          setLoading(false);
+   //       }
+   //       fetchNotes();
+   //    }, [[]]});
+
+   useEffect(() => {
+      if (session) {
+         const fetchNotes = async () => {
+            try {
+               const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/fetch-unique-notes?userId=${session.id}&noteId=${noteId}`);
+               const { note }: { note: Note } = await response.json();
+               const dnote = JSON.parse(JSON.stringify(note));
+               if (!dnote || dnote === null || dnote === undefined || dnote.text === null || !dnote.text) {
+                  console.error("Note not found or invalid note ID");
+               } else {
+                  console.log(dnote, "serializeduniqnotes");
+                  setNote(dnote);
+               }
+               console.log("fetched notes", dnote);
+            } catch (error) {
+               console.error("Error fetching notes:", error);
+            } finally {
+
+               setTimeout(() => {
+                  setLoading(false);
+               }, 1000);
+
+            }
+         };
+         fetchNotes();
+      }
+   }, []);
+
+   // console.log('user', userId, 'noteId', noteId, 'note', note, 'task', task);
+   if (loading) return (<div>Loading...</div>)
+   // const searchParams = props.searchParams;
+
+   // const user = getUser()
+
+   // if (!user) {
+   //    console.log("unauthenticated, session expired. Redirecting to login..");
+   //    return redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
+   // }
+
+
+
+   // if (!note) return <div>note Loading...</div>;
+   // console.log('notes', note);
+
    // const cookieStore = await cookies()
    // const supabase = await createCookieClient(cookieStore);
    // const supabase = await createCookieClient(Promise.resolve(cookieStore));
@@ -28,36 +130,18 @@ export default async function HomePage({ searchParams }: Props) {
    // if (!user) {
    //    return console.log("unauthenticated, session expired. Redirecting to login..", user);
    // }
+   // const userId = session?.user?.id; // Extract only what you need
 
-   try {
-      const noteIdParam = (await searchParams).noteId;
-      const noteId = Array.isArray(noteIdParam)
-         ? noteIdParam![0]
-         : noteIdParam || "";
-
-      const note = await prisma.note.findUnique({
-         where: { id: noteId, authorId: session.user.id },
-      });
-
-      // if (!note) {
-      //    console.log("Note not found or invalid note ID");
-      //    return <div>Note not found or invalid note ID.{note}</div>;
-      // }
-
-      return (
-         <div className="flex h-full flex-col items-center gap-4">
-            <h1 className="text-2xl font-bold">Welcome, {session.user.email}</h1>
-            <p className="text-lg">Here are your notes:</p>
-            <NewNoteButton user={session.user} />
-            <NoteTextInput noteId={noteId} startingNoteText={note?.text || ""} />
-            {/* <AskAIButton user={session.user} /> */}
-            <HomeToast />
-            Note content: {note ? note.text : "Note not found or invalid note ID"}
-
-         </div>
-      );
-   } catch (error) {
-      console.log("An error occurred:", error);
-      return <div>An unexpected error occurred. Please try again later.</div>;
-   }
+   return (
+      <div className="flex h-full flex-col items-center gap-4">
+         <h1 className="text-2xl font-bold">Welcome, {session?.email}</h1>
+         <p className="text-lg">Here are your notes:</p>
+         <NewNoteButton user={session} note={noteText} />
+         <NoteTextInput noteId={note?.id ?? ""} startingNoteText={note?.text ?? ""} />
+         {/* <AskAIButton user={session.user} /> */}
+         <HomeToast />
+         task content: {task ? task : "task not found "}
+      </div>
+   );
 }
+

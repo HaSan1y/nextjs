@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   compress: true,
   images: {
-    domains: ['example.com'], // Add domains for optimized images
+    domains: ['example.com,http://localhost:3000/'], // Add domains for optimized images
   },
 };
 

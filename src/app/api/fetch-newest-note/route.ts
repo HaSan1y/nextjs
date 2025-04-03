@@ -1,18 +1,16 @@
-import { getSession } from "@/auth/server";
-import { prisma } from "@/db/prisma";
+"use server";
+// import { getUser } from "../../../auth/server";
+import { prisma } from "../../../db/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-   // const { searchParams } = new URL(request.url);
-   // const userId = searchParams.get("userId") || "";
+   const { searchParams } = new URL(request.url);
+   const userId = searchParams.get("userId") || "";
 
-   const session = await getSession();
-   const userId = session?.user.id;
-   if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-   }
+   // const user = await getUser();
+   // const userId = user?.id;
    if (!userId) {
-      throw new Error("User ID is required");
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
    }
 
    const newestNoteId = await prisma.note.findFirst({
@@ -22,11 +20,13 @@ export async function GET(request: NextRequest) {
    });
    if (!newestNoteId) {
       return NextResponse.json({
-         newestNoteId: null,
+         newestNoteId: "",   //null
+
       });
    }
 
    return NextResponse.json({
       newestNoteId: newestNoteId?.id,
+
    });
 }

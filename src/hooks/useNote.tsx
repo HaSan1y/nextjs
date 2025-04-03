@@ -1,6 +1,6 @@
 "use client";
 
-import { NoteProviderContext } from "@/providers/NoteProvider";
+import { NoteProviderContext } from "../providers/NoteProvider";
 import { useContext } from "react";
 
 function useNote() {

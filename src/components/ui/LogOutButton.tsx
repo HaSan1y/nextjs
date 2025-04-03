@@ -2,9 +2,9 @@
 
 import { Button } from './button'
 import { Loader2 } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '../../hooks/use-toast'
 import { useRouter } from 'next/navigation'
-import { logOutAction } from '@/actions/users'
+import { logOutAction } from '../../actions/users'
 import { useTransition } from "react";
 
 function LogOutButton() {
@@ -15,18 +15,18 @@ function LogOutButton() {
    const handleClick = () => {
       startTransition(async () => {
          try {
-            const { errorMessage } = await logOutAction();
+            const { errorMessage, successMessage } = await logOutAction();
             if (!errorMessage) {
                toast({
                   title: "Logged out",
                   description: "You have been logged out successfully",
                   variant: "success",
                });
-               router.push("/");
+               return router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
             } else {
                toast({
                   title: "Error",
-                  description: errorMessage,
+                  description: "An unexpected error occurred. Please try again.",
                   variant: "destructive",
                });
             }

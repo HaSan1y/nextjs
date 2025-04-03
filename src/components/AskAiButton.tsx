@@ -1,7 +1,8 @@
 "use client";
 
-import { User } from "@supabase/supabase-js";
-import { Button } from "@/components/ui/button";
+import type { User } from "@supabase/supabase-js";
+// import type { User } from "@prisma/client";
+import { Button } from "../components/ui/button";
 import {
    Dialog,
    DialogContent,
@@ -11,18 +12,18 @@ import {
    DialogTrigger,
 } from "./ui/dialog";
 import { Fragment, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/router";
 import { Textarea } from "./ui/textarea";
 import { ArrowUpIcon } from "lucide-react";
 // import { askAIAboutNotesAction } from "@/actions/notes";
 import "@/styles/ai-response.css";
 
 type Props = {
-   user: User | null;
+   session: User | null;
 };
 
-function AskAIButton({ user }: Props) {
-   const router = useRouter();
+function AskAIButton({ session }: Props) {
+   // const router = useRouter();
 
    const [isPending] = useTransition();
 
@@ -32,8 +33,9 @@ function AskAIButton({ user }: Props) {
    const [responses, setResponses] = useState<string[]>([]);
 
    const handleOnOpenChange = (isOpen: boolean) => {
-      if (!user) {
-         router.push("/login");
+      if (!session) {
+         /*  if (!router.isReady) return;
+           router.push("/login");*/
       } else {
          if (isOpen) {
             setQuestionText("");

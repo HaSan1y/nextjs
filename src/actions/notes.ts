@@ -1,43 +1,44 @@
 "use server";
-
-// import { getUser } from "@/auth/server";
-import { prisma } from "@/db/prisma";
-// import { handleError } from "/lib/utils";
+// import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "../db/prisma";
+import { handleErrors } from "../lib/utils";
 // import openai from "@/openai";
 // import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
-import { createCookieClient } from "@/auth/server";
+import { /*createCookieClient,*/ getUser } from "../auth/server";
 import { cookies } from 'next/headers'
 
-export const createNoteAction = async (noteId: string) => {
-   const cookieStore = cookies()
+export const createNoteAction = async (noteId: string, text: string) => {
    try {
-      const supabase = await createCookieClient(cookieStore);
-      const { data: { user } } = await supabase.auth.getUser()
-      // const user = await getUser();
-      if (!user) throw new Error("You must be logged in to create a note");
+      // const cookieStore = await cookies()
+      // const supabase = await createCookieClient(Promise.resolve(cookieStore));
+      // const { data: { user }, error } = await supabase.auth.getUser()
+      const user = await getUser();
+
+      if (!user) throw new Error("err: You must be logged in to create a note");
 
       await prisma.note.create({
          data: {
             id: noteId,
             authorId: user.id,
-            text: "",
+            text: text,
          },
       });
 
       return { errorMessage: null };
    } catch (error) {
-      return console.log(error);
-      // return handleError(error);
+
+       return handleErrors(error);
    }
 };
 
 export const updateNoteAction = async (noteId: string, text: string) => {
-   const cookieStore = cookies()
+   // const cookieStore = await cookies()
    try {
-      const supabase = await createCookieClient(cookieStore);
-      const { data: { user } } = await supabase.auth.getUser()
-      // const user = await getUser();
-      if (!user) throw new Error("You must be logged in to update a note");
+      // const supabase = await createCookieClient(cookieStore);
+      // const supabase = await createCookieClient(Promise.resolve(cookieStore));
+      // const { data: { user }, error } = await supabase.auth.getUser()
+      const user = await getUser();
+      if (!user) throw new Error("err:You must be logged in to update a note");
 
       await prisma.note.update({
          where: { id: noteId },
@@ -51,12 +52,12 @@ export const updateNoteAction = async (noteId: string, text: string) => {
 };
 
 export const deleteNoteAction = async (noteId: string) => {
-   const cookieStore = cookies()
    try {
-      const supabase = await createCookieClient(cookieStore);
-      const { data: { user } } = await supabase.auth.getUser()
-      // const user = await getUser();
-      if (!user) throw new Error("You must be logged in to delete a note");
+      // const cookieStore = await cookies()
+      // const supabase = await createCookieClient(Promise.resolve(cookieStore));
+      // const { data: { user }, error } = await supabase.auth.getUser()
+      const user = await getUser();
+      if (!user) throw new Error("ERROR:You must be logged in to delete a note");
 
       await prisma.note.delete({
          where: { id: noteId, authorId: user.id },
@@ -74,7 +75,7 @@ export const deleteNoteAction = async (noteId: string) => {
 // ) => {
 //    const cookieStore = cookies()
 //    const supabase = await createClient(cookieStore);
-//    const { data: { user } } = await supabase.auth.getUser()
+//    const { data: { user }, error } = await supabase.auth.getUser()
 //    // const user = await getUser();
 //    if (!user) throw new Error("You must be logged in to ask AI questions");
 

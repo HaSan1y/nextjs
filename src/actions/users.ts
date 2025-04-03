@@ -1,7 +1,8 @@
 "use server"
 
-import { createCookieClient, createSupabaseClient } from "@/auth/server"
-import { prisma } from "@/db/prisma"
+import { createCookieClient } from "../auth/server"
+import { prisma } from "../db/prisma"
+// import { redirect } from "next/navigation"
 // import { handleErrors } from "@/lib/utils"
 
 export const loginAction = async (email: string, password: string) => {
@@ -38,11 +39,12 @@ export const loginAction = async (email: string, password: string) => {
 export const logOutAction = async () => {
    try {
       const { auth } = await createCookieClient();
-
       const { error } = await auth.signOut();
-      if (error) throw error;
 
+      if (error) throw new Error('err: ' + error.code || "Logout failed");
+      // return redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
       return { successMessage: 'Logged out successfully' };
+
    } catch (error) {
       if (error instanceof Error) {
          return { errorMessage: error.message };
@@ -62,7 +64,7 @@ export const signUpAction = async (email: string, password: string) => {
          email,
          password
       })
-      if (error) throw error
+      if (error) throw new Error('err: ' + error.code || "Signup failed");
 
       const userID = data.user?.id
       if (!userID) {
