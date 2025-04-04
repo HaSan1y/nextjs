@@ -7,9 +7,7 @@ export async function GET(request: NextRequest) {
    const { searchParams } = new URL(request.url);
    const userId: string | null = searchParams.get("userId");
 
-   if (!userId || userId === "null") {
-      return NextResponse.json({ error: "User ID, or Note ID is required" }, { status: 400 });
-   }
+   if (!userId) { return NextResponse.json({ tasks: null }, { status: 400 }); }
    try {
       const tasks = await prisma.tasks.findMany({
          select: { id: true, title: true },
@@ -25,7 +23,6 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(serializedTasks, { status: 200 });
    } catch (error) {
-      console.error(error);
-      return NextResponse.json({ tasks: null }, { status: 500 });
+      return NextResponse.json({ tasks: error }, { status: 500 });
    }
 }

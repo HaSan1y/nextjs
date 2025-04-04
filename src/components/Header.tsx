@@ -1,27 +1,44 @@
 "use client"
 
 // import { useSession } from "@/providers/SessionProvider";
-import { shadows } from "./../styles/utils"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "./ui/button"
-import DarkModeToggle from "./DarkmodeToggle"
-import LogOutButton from "./ui/LogOutButton"
-import type { User } from '@supabase/auth-helpers-nextjs';
+import { shadows } from "./../styles/utils";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "./ui/button";
+import DarkModeToggle from "./DarkmodeToggle";
+import LogOutButton from "./ui/LogOutButton";
+import type { User } from '@supabase/auth-js';
+// import type { User } from '@supabase/auth-helpers-nextjs';
 // import type { User } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { getUser } from "./../auth/server";
+
 // import { useSession } from "@/providers/SessionProvider";
 // interface HeaderProps { session: Session; }
 const Header = () => {
+   //in your logout function
+
+   // const router = useRouter();
+
+   // const handleLogout = async () => {
+   //    try {
+   //       await fetch('/api/logout', { method: 'POST' });
+
+   //       router.push('/login');
+   //    } catch (error) {
+   //       console.error('Logout failed:', error);
+   //    }
+   // };
+
+
    // const Header: React.FC<HeaderProps> = ({ session }) => {
    // function Header({ session }: { session: Session | null }) {
    // console.log(session?.user);
    // const session = Promise.resolve(getSession());
-   const [session, setSession] = useState<User | null>(null);
+   const [session, setSession] = useState<User>();
    const [loading, setLoading] = useState(true);
-   const router = useRouter();
+   // const router = useRouter();
    // console.log('session...', session);
 
    // const { session: sessionData } = useSession();
@@ -29,7 +46,7 @@ const Header = () => {
       async function fetchSession() {
          try {
             const sessionData = await getUser();
-            if (sessionData || sessionData !== null) {
+            if (sessionData) {
                setSession(sessionData);
             } else {
                console.log("no session:", sessionData);
@@ -39,9 +56,10 @@ const Header = () => {
          }
          finally {
             setLoading(false);
+            // router.push('/login');
+
          }
       }
-
       fetchSession();
    }, []);
 
@@ -71,6 +89,7 @@ const Header = () => {
       return <div>Loading...</div>;
    }
    console.log('session...', session);
+   // If session is available, render the protected route
    return (
       <header className="flex items-center justify-between w-full max-w-4xl px-4 py-4 mx-auto text-slate-200 dark:text-slate-200 bg-popover dark:bg-slate-900 border-b border-slate-700 dark:border-slate-700" style={{ boxShadow: shadows.lg }}>
          <Link href="./" className="flex items-center gap-2">Home

@@ -1,4 +1,5 @@
 "use server"
+import { NextResponse } from "next/server";
 import { createServerClient, type CookieOptions } from '../../node_modules/@supabase/ssr';
 import { cookies } from 'next/headers'
 import { createClient } from '@supabase/supabase-js';
@@ -7,9 +8,12 @@ import { createClient } from '@supabase/supabase-js';
 // import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 // import { NextApiRequest, NextApiResponse } from 'next';
 // import { NextRequest } from 'next/server';
-
+// import type { User } from '@supabase/auth-js';
 
 export async function createCookieClient(cookieStore?: ReturnType<typeof cookies>) {
+   // headers: {
+   // "Access-Control-Allow-Credentials": "true",
+   //  },
    cookieStore = cookieStore ? Promise.resolve(cookieStore) : cookies();
    // cookieStore = cookieStore || await cookies();
 
@@ -20,20 +24,37 @@ export async function createCookieClient(cookieStore?: ReturnType<typeof cookies
       {
          cookies: {
             async get(name: string) {
-               // const store = await cookieStore;
+
                // return store.get(name)?.value;
-               return (await cookieStore).get(name)?.value;
+               const value = (await cookieStore).get(name)?.value;
+               // console.log(`Cookie get: ${name} = ${value}`);
+               return value || null;
             },
+            // const fragments = [];
+            // let index = 0;
+            // let fragment;
+            // do {
+            //    fragment = (await cookieStore).get(`${name}.${index}`)?.value;
+            //    if (fragment) {
+            //       fragments.push(fragment);
+            //    }
+            //    index++;
+            // } while (fragment);
+
+            // const combinedValue = fragments.join("");
+            // console.log(`Reconstructed cookie: ${name} = ${combinedValue}`);
+            // return combinedValue || (await cookieStore).get(name)?.value;
             async remove(name: string, options: CookieOptions) {
-               // const store = await cookieStore;
+               // console.log(`Cookie remove: ${name}`);
                // store.set(name, '', { ...options, maxAge: 0 })
                (await cookieStore).set(name, '', { ...options, maxAge: 0 });
             },
             // async set(data) { console.log('xxset:', data); },
             async set(name: string, value: string, options: CookieOptions) {
-               // const store = await cookieStore;
+
                // store.set(name, value, options)
                try {
+                  // console.log(`Cookie set: ${name} = ${value}`);
                   (await cookieStore).set(name, value, options);
                } catch {
                   console.error('Error setting cookie:');
@@ -45,10 +66,12 @@ export async function createCookieClient(cookieStore?: ReturnType<typeof cookies
    return client;
 }
 
-export async function getSSession() {
+export async function getSession() {
    const supabase = await createCookieClient();
-   const { data: { session } } = await supabase.auth.getSession();
-   return session;
+   const { data: { user }, error } = await supabase.auth.getUser();
+   console.log("Session retrieved:", user);
+   console.log("Session error:", error);
+   return user;
 }
 
 // creates an user object
@@ -73,8 +96,41 @@ export async function getUser() {
 export async function createSupabaseClient() {
    return createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      global: {
+         headers: {
+            "Access-Control-Allow-Credentials": "true",
+            // "Custom-Header": "MyCustomValue",
+         },
+      },
+   }
    );
+}
+
+
+export async function DELETE(/*request: Request*/) {
+   const response = NextResponse.json({ message: "All cookies cleared" });
+
+   // List of cookies to delete
+   const cookiesToDelete = [
+      "sb-{project-ref}-auth-token",
+      "sb-{project-ref}-auth-token.0",
+      "sb-{project-ref}-auth-token.1",
+      "sb-{project-ref}-auth-token.2",
+      "sb-{project-ref}-auth-token.3",
+      "sb-{project-ref}-auth-token.4",
+      "sb-{project-ref}-auth-token.5",
+      // Add other cookies if needed
+   ];
+
+   cookiesToDelete.forEach((cookieName) => {
+      response.cookies.set(cookieName, "", {
+         path: "/",
+         maxAge: 0, // Deletes the cookie
+      });
+   });
+
+   return response;
 }
 
 // export async function handler(req: NextRequest | NextApiRequest, res: NextApiResponse) {
@@ -116,3 +172,43 @@ export async function createSupabaseClient() {
 //    }
 // }
 
+// import { createServerClient } from "@supabase/ssr";
+// import { cookies } from "next/headers";
+
+// export async function createClient() {
+//   const cookieStore = await cookies();
+
+//   const client = createServerClient(
+//     process.env.SUPABASE_URL!,
+//     process.env.SUPABASE_ANON_KEY!,
+//     {
+//       cookies: {
+//         getAll() {
+//           return cookieStore.getAll();
+//         },
+//         setAll(cookiesToSet) {
+//           try {
+//             cookiesToSet.forEach(({ name, value, options }) =>
+//               cookieStore.set(name, value, options),
+//             );
+//           } catch {}
+//         },
+//       },
+//     },
+//   );
+
+//   return client;
+// }
+
+// export async function getUser() {
+//   const { auth } = await createClient();
+
+//   const userObject = await auth.getUser();
+
+//   if (userObject.error) {
+//     console.error(userObject.error);
+//     return null;
+//   }
+
+//   return userObject.data.user;
+// }

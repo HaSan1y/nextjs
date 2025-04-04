@@ -10,10 +10,9 @@ export async function GET(request: NextRequest) {
    const noteId: string = searchParams.get("noteId") || '';
    // const user = await getUser();Get the current user (e.g., from session)
 
-   if (!userId || userId === "null") {
-      return NextResponse.json({ error: "User ID, or Note ID is required" });
+   if (!userId || !noteId) {
+      return NextResponse.json({ error: null }, { status: 400 });
    }
-
 
    try {
       // Fetch the note by its ID and check if the user is the author
@@ -21,14 +20,9 @@ export async function GET(request: NextRequest) {
          where: { id: noteId, authorId: userId },
       });
 
-      if (!note) {
-         return NextResponse.json({ notes: 'null' });
-      }
+      if (!note) { return NextResponse.json({ error: null }, { status: 401 }); }
 
       // const plainNote = JSON.parse(JSON.stringify(note));
-      return NextResponse.json({ note: note });
-   } catch (error) {
-      console.error("Error fetching note:", error);
-      return NextResponse.json({ note: 'null' });
-   }
+      return NextResponse.json(note, { status: 200 });
+   } catch (error) { return NextResponse.json({ error: error }, { status: 500 }); }
 }

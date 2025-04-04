@@ -8,11 +8,13 @@ import NewNoteButton from "../components/NewNoteButton";
 import HomeToast from "../components/HomeToast";
 import { getUser } from "../auth/server";
 import { useEffect, useState, useContext } from "react";
-import type { User } from '@supabase/auth-helpers-nextjs';
+// import type { User } from '@supabase/auth-helpers-nextjs';
+import type { User } from '@supabase/auth-js';
 import type { Note } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 
 import { NoteProviderContext } from "../providers/NoteProvider";
+import { useRefresh } from "@/providers/RefreshProvider";
 
 // type Props = {
 //    searchParams?: {
@@ -24,13 +26,19 @@ import { NoteProviderContext } from "../providers/NoteProvider";
 // };
 
 export default function HomePage(/*{ searchParams }: Props*/) {
+   const { refresh, setRefresh } = useRefresh();
+   if (refresh) {
+      // reload the page
+      window.location.reload();
+      setRefresh(false);
+   }
 
    const searchParams = useSearchParams();
    const [session, setSession] = useState<User | null>(null);
    const [note, setNote] = useState<Note | null>(null);
    const [loading, setLoading] = useState(true);
    // const userId = searchParams?.get("userId");
-   const task = searchParams?.get("task");
+   // const task = searchParams?.get("task");
    const noteIdParam = searchParams?.get("noteId");
    const noteId = Array.isArray(noteIdParam) ? noteIdParam[0] : noteIdParam || "";
 
@@ -39,19 +47,17 @@ export default function HomePage(/*{ searchParams }: Props*/) {
    console.log("noteText:", noteText);
 
    useEffect(() => {
-      // Fetch user and redirect if necessary
       const fetchUser = async () => {
          console.log("fetching user");
          try {
             const currentUser: User | null = await getUser();
-            if (!currentUser || currentUser === null) {
+            if (currentUser) {
+               setSession(currentUser);
+            } else {
                console.log("unauthenticated, session expired. Redirecting to login..");
                window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
-               // Handle the redirect logic on the client side here
-            } else {
-               console.log("user: also success");
-               setSession(currentUser);
             }
+
          } catch (error) {
             console.error("Error fetching user:", error);
          }
@@ -62,19 +68,6 @@ export default function HomePage(/*{ searchParams }: Props*/) {
       fetchUser();
    }, []);
 
-   // useEffect(() => {
-   //    const fetchNotes = async () => {
-   //       try {
-   //          const response = await fetch('/api/fetch-unique-notes');
-   //          const data = await response.json();
-   //          setNote(note);
-   //          console.log("fetchd notes", data);
-   //       } catch (error) {
-   //          console.error("Error fetching notes:", error);
-   //          setLoading(false);
-   //       }
-   //       fetchNotes();
-   //    }, [[]]});
 
    useEffect(() => {
       if (session) {
@@ -140,7 +133,6 @@ export default function HomePage(/*{ searchParams }: Props*/) {
          <NoteTextInput noteId={note?.id ?? ""} startingNoteText={note?.text ?? ""} />
          {/* <AskAIButton user={session.user} /> */}
          <HomeToast />
-         task content: {task ? task : "task not found "}
       </div>
    );
 }

@@ -16,18 +16,15 @@ import type { Note } from "@prisma/client";
 import { useEffect, useState } from 'react';
 import { getUser } from "../auth/server"
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 // import { prisma } from "@/db/prisma";
-import type { User } from '@supabase/auth-helpers-nextjs';
+// import type { User } from '@supabase/auth-helpers-nextjs';
+import type { User } from '@supabase/auth-js';
 
 export default function AppSidebar() {
-   const searchParams = useSearchParams();
    const [session, setSession] = useState<User | null>(null);
    const [notes, setNote] = useState<Note[]>([]);
    const [userLoading, setUserLoading] = useState(true);
    const [notesLoading, setNotesLoading] = useState(true);
-   // const userId = searchParams?.get("userId");
-   // const noteId = searchParams?.get("noteId");
 
 
    // useEffect(() => {

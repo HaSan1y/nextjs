@@ -2,8 +2,9 @@
 
 import { createCookieClient } from "../auth/server"
 import { prisma } from "../db/prisma"
-// import { redirect } from "next/navigation"
+import { redirect } from "next/navigation"
 // import { handleErrors } from "@/lib/utils"
+
 
 export const loginAction = async (email: string, password: string) => {
    try {
@@ -43,9 +44,23 @@ export const logOutAction = async () => {
 
       if (error) throw new Error('err: ' + error.code || "Logout failed");
       // return redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
-      return { successMessage: 'Logged out successfully' };
 
+      // const sessionData = await response.json();
+      // setIsLoggedIn(!!sessionData.user);
+      // router.push('/login');
+      // await prisma.$disconnect()
+
+      redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
+      // return { successMessage: 'Logged out successfully' };
+      // await prisma.user.deleteMany({
+      //    where: {
+      //       id: {
+      //          not: null,
+      //       },
+      //    },
+      // });
    } catch (error) {
+      console.error("Error in logOutAction:", error);
       if (error instanceof Error) {
          return { errorMessage: error.message };
       }
@@ -83,3 +98,23 @@ export const signUpAction = async (email: string, password: string) => {
       return { errorMessage: 'Error signup' }
    }
 }
+
+// const handleLogout = async () => {
+//    try {
+//        await fetch('/api/logout', { method: 'POST' });
+//        const response = await fetch('/api/session'); // Fetch current session
+//        const sessionData = await response.json();
+//        setIsLoggedIn(!!sessionData.user); // Update state based on session
+//        router.push('/login');
+//    } catch (error) {
+//        console.error('Logout failed:', error);
+//    }
+// };
+// useEffect(() => {
+//    const fetchSession = async () => {
+//        const response = await fetch('/api/session');
+//        const sessionData = await response.json();
+//        setIsLoggedIn(!!sessionData.user);
+//    };
+//    fetchSession();
+// }, [/* dependency array */]);

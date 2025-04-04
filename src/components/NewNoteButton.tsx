@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { createNoteAction } from "../actions/notes";
 import type { User, } from "@supabase/supabase-js";
-import type { Note } from "@prisma/client";
+
 
 type Props = { user: User | null; note: string; };
 

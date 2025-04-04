@@ -1,14 +1,11 @@
 "use client";
-import { createSupabaseClient, getUser } from '../auth/server';
+import { getUser } from '../auth/server';
 // import type { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from 'react';
-import type { User } from '@supabase/supabase-js';
+// import type { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/auth-js';
 import { Tasks } from '@prisma/client';
 // import type { Tasks } from '@prisma/client';
-interface SimplifiedTask {
-   id: string;
-   title: string;
-}
 
 function useLoadTasks() {
    const [session, setSession] = useState<User | null>(null);
@@ -44,9 +41,9 @@ function useLoadTasks() {
             console.log(task, "serializedu tasks");
             setTasks(Array.isArray(task) ? task : [task]);
          }
-         console.log("fetched notes", task);
+         console.log("fetched tasks", task);
       } catch (error) {
-         console.error("Error fetching notes:", error);
+         console.error("Error fetching tasks:", error);
       } finally {
          setLoading(false);
       }

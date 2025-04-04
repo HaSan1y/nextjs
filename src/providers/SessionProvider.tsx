@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 // import type { User } from "@supabase/auth-helpers-nextjs";
-import type { User } from '@supabase/auth-helpers-nextjs';
+import type { User } from '@supabase/auth-js';
 // import type { User } from "@prisma/client";
 import { getUser } from "./../auth/server";
 // import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
@@ -40,12 +40,12 @@ export function SessionProvider({
             } catch (err) {
                console.error("Error fetching user:", err);
             }
-            const currentSession = await getUser();
-            if (currentSession) {
-               setSession(currentSession);
-            } else {
-               console.warn("No user session found");
-            }
+            // const currentSession = await getUser();
+            // if (currentSession) {
+            //    setSession(currentSession);
+            // } else {
+            //    console.warn("No user session found");
+            // }
          };
          fetchSession();
       }

@@ -1,9 +1,8 @@
 // import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
 // import { cookies } from "next/headers";
 // import { getUser } from "./auth/server";
 // import type { User } from '@supabase/auth-helpers-nextjs';
-export async function middleware(request: NextRequest) { }
+export async function middleware(/*request: NextRequest*/) { }
 /*
 const session: User | null = await getUser();
 if (!session || null) {

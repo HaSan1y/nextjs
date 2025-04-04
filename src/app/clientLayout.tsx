@@ -2,9 +2,10 @@
 import "@/styles/globals.css";
 
 import { getUser } from "../auth/server";
-
-import type { User } from '@supabase/auth-helpers-nextjs';
-import type { Tasks } from "@prisma/client";
+import type { User } from '@supabase/auth-js';
+// import type { User, createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+// import type { User } from '@supabase/ssr';
+// import type { Tasks, User } from "@prisma/client";
 
 
 // import { useEffect, useState } from "react";
@@ -17,8 +18,10 @@ import AppSidebar from "@/components/AppSidebar";
 // import { redirect } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import PageTwo from "./PageTwo";
+import { RefreshProvider } from "@/providers/RefreshProvider";
+// import { useRouter } from "next/navigation";
 
-// import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+
 // import { cookies } from 'next/headers'
 
 type LayoutProps = {
@@ -41,6 +44,9 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
          if (!fetchedUser || fetchedUser === null) {
             console.log("Failed to retrieve user. not logged in Cookies disabled or session expired..");
             // Handle the redirect logic on the client side here
+            // You can use the router from next/navigation to redirect
+            // const router = useRouter();
+            // router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
             // redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
          } else {
             setUser(fetchedUser);
@@ -97,19 +103,21 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
    // if (loading) {
    //    return <div>Loading..tasks.</div>;
    // }
-   console.log("user from layout:", user);
+   // console.log("user from layout:", user);
    return (
-      <SessionProvider initialSession={user}>
-         {user ? <AppSidebar /> : null}
-         <Header /*session={session}*/ />
-         {user ? <SidebarTrigger /> : null}
-         <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900">
-            {children}
-         </main>
-         {user ?
-            <PageTwo />
-            : (<p>Please log in to see your tasks.</p>)}
-      </SessionProvider>
+      <RefreshProvider>
+         <SessionProvider initialSession={user}>
+            {user ? <AppSidebar /> : null}
+            <Header /*session={session}*/ />
+            {user ? <SidebarTrigger /> : null}
+            <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900">
+               {children}
+            </main>
+            {user ?
+               <PageTwo />
+               : (<p>Please log in to see your tasks.</p>)}
+         </SessionProvider>
+      </RefreshProvider>
    );
 }
 

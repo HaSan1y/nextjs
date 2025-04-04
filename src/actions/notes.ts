@@ -5,7 +5,7 @@ import { handleErrors } from "../lib/utils";
 // import openai from "@/openai";
 // import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { /*createCookieClient,*/ getUser } from "../auth/server";
-import { cookies } from 'next/headers'
+// import { cookies } from 'next/headers'
 
 export const createNoteAction = async (noteId: string, text: string) => {
    try {
