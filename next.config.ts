@@ -1,11 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: true,
   compress: true,
+  swcMinify: true,
+  basePath: '/app',
   images: {
-    domains: ['example.com,http://localhost:3000/'], // Add domains for optimized images
+    domains: ['example.com', 'localhost'],
+    loader: 'default',
   },
 };
 
