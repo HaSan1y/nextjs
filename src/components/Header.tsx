@@ -13,7 +13,6 @@ import type { User } from '@supabase/auth-js';
 import { useEffect, useState } from "react";
 // import { useRouter } from "next/navigation";
 import { getUser } from "./../auth/server";
-import { SidebarTrigger } from "./ui/sidebar";
 
 // import { useSession } from "@/providers/SessionProvider";
 // interface HeaderProps { session: Session; }

@@ -45,15 +45,15 @@ export async function createCookieClient(cookieStore?: ReturnType<typeof cookies
             // console.log(`Reconstructed cookie: ${name} = ${combinedValue}`);
             // return combinedValue || (await cookieStore).get(name)?.value;
             async remove(name: string, options: CookieOptions) {
-               const defaultOptions: CookieOptions = {
-                  ...options,
-                  maxAge: 0,
-                  path: '/', // Ensure the path is '/' to remove the cookie globally
-                  // If your cookie has domain or SameSite set, make sure to add those as well
-                  domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN || '', // Set if using a specific domain
-                  sameSite: 'lax', // Or 'Strict' based on how the cookie was set
-                  secure: process.env.NODE_ENV === 'production', // Ensure it's secure in production
-               };
+               // const defaultOptions: CookieOptions = {
+               //    ...options,
+               //    maxAge: 0,
+               //    path: '/', // Ensure the path is '/' to remove the cookie globally
+               //    // If your cookie has domain or SameSite set, make sure to add those as well
+               //    domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN || '', // Set if using a specific domain
+               //    sameSite: 'lax', // Or 'Strict' based on how the cookie was set
+               //    secure: process.env.NODE_ENV === 'production', // Ensure it's secure in production
+               // };
                (await cookieStore).set(name, '', { ...options, maxAge: 0 });
             },
             // async set(data) { console.log('xxset:', data); },

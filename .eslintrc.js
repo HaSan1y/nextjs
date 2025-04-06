@@ -1,5 +1,4 @@
-rules: {
-   '@typescript-eslint/no-unused-vars': ['error', { 
-     varsIgnorePattern: '^actionTypes$'
-   }]
- }
+"rules": {
+  "react/react-in-jsx-scope": "off",
+  "react/jsx-uses-react": "off"
+}

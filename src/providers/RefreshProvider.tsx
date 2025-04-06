@@ -24,9 +24,10 @@
 //    }
 //    return context;
 // }
+import type { User } from "@supabase/supabase-js";
 type AuthState = {
    authenticated: boolean;
-   user: any | null; // Replace `any` with your user type if available
+   user: User | null; // Replace `any` with your user type if available
 };
 
 type AuthContextType = {
@@ -38,7 +39,7 @@ import React, { createContext, useContext, useState } from 'react';
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-   const [authState, setAuthState] = useState({ authenticated: false, user: null });
+   const [authState, setAuthState] = useState<AuthState>({ authenticated: false, user: null });
 
    return (
       <AuthContext.Provider value={{ authState, setAuthState }}>

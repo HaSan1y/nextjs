@@ -13,7 +13,6 @@ import type { Note } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 
 import { NoteProviderContext } from "../providers/NoteProvider";
-import { useAuth } from "@/providers/RefreshProvider";
 import AskAIButton from "@/components/AskAiButton";
 
 // type Props = {
@@ -26,7 +25,6 @@ import AskAIButton from "@/components/AskAiButton";
 // };
 
 export default function HomePage(/*{ searchParams }: Props*/) {
-   const { authState, setAuthState } = useAuth();
    // const { refresh, setRefresh } = useRefresh();
    // if (refresh) {
    //    // reload the page
