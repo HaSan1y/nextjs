@@ -1,9 +1,5 @@
 "use client";
 import ClientLayout from "./clientLayout";
-import { ThemeProvider } from "../providers/ThemeProvider";
-import NoteProvider from "../providers/NoteProvider";
-import { SidebarProvider } from "../components/ui/sidebar";
-import { Toaster } from "../components/ui/toaster";
 import { Suspense } from "react";
 
 type LayoutProps = {
