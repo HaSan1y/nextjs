@@ -29,7 +29,7 @@ function useLoadTasks() {
 
    const loadTasks = useCallback(async () => {
       try {
-         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/retriev-tasks?userId=${session?.id}`);
+         const response = await fetch(`/api/retriev-tasks?userId=${session?.id}`);
          // const response = await fetch(`<span class="math-inline">\{process\.env\.NEXT\_PUBLIC\_BASE\_URL\}/api/retriev\-tasks?userId\=</span>{session?.id}`);
          const task: Tasks = await response.json();
 

@@ -26,7 +26,7 @@ function LogOutButton() {
                   variant: "success",
                });
                if (success) {
-                  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/logout`, { method: 'POST' })
+                  const response = await fetch(`/api/logout`, { method: 'POST' })
 
                   if (response.ok) {
                      // Optionally, you can redirect after successful logout
@@ -71,7 +71,7 @@ function LogOutButton() {
       });
    }
 
-   return (<Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/login`}>
+   return (<Link href={`/login`}>
       <Button variant="outline" onClick={handleClick} disabled={isPending} className="hidden sm:block w-24">
          {isPending ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

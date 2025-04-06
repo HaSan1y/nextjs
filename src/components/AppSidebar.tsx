@@ -49,7 +49,7 @@ export default function AppSidebar() {
                setSession(fetchedUser);
 
 
-               const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/fetch-all-notes?userId=${fetchedUser.id}`);
+               const response = await fetch(`/api/fetch-all-notes?userId=${fetchedUser.id}`);
                const data: Note[] = await response.json();
                const sortedNotes = JSON.parse(JSON.stringify(data));
                console.log("sortedNotes:", sortedNotes);
