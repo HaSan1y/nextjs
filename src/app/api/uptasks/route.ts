@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
    // response.headers.set("Custom-Header", "MyCustomValue");
    // return response;
    const { searchParams } = new URL(request.url);
-   const userId: string | null = searchParams.get("userId");
-   const id: string | null = searchParams.get("Id");
-   const title: string | null = searchParams.get("title");
+   const userId: string | null = searchParams.get("userId") || "";
+   const id: string | null = searchParams.get("Id") || "";
+   const title: string | null = searchParams.get("title") || "";
 
    if (!userId || !id || !title) { return NextResponse.json({ error: null }, { status: 400 }); }
 

@@ -42,7 +42,7 @@ function isToastType(value: string | null): value is ToastType {
 }
 
 function HomeToast() {
-   const toastType = useSearchParams().get("toastType");
+   const toastType = useSearchParams().get("toastType") || "";
    const { toast } = useToast();
 
    const removeUrlParam = () => {

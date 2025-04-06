@@ -6,7 +6,7 @@ import type { Note } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
    const { searchParams } = new URL(request.url);
-   const userId: string | null = searchParams.get("userId");
+   const userId: string | null = searchParams.get("userId") || "";
    const noteId: string = searchParams.get("noteId") || '';
    // const user = await getUser();Get the current user (e.g., from session)
 

@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 // import type { User, Note } from "@prisma/client";
 export async function POST(request: NextRequest) {
    const { searchParams } = new URL(request.url);
-   const userId = searchParams.get("userId");
+   const userId = searchParams.get("userId") || "";
 
    // const session = await getUser();
    if (!userId) {
