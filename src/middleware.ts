@@ -4,17 +4,41 @@ import { NextResponse, type NextRequest } from 'next/server';
 // import { cookies } from "next/headers";
 // import { getUser } from "./auth/server";
 // import type { User } from '@supabase/auth-helpers-nextjs';
-export async function middleware(request: NextRequest) {
-   const authToken = request.cookies.get('auth-token');
-   // Optionally validate token here
+// import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+export async function middleware(req: NextRequest) {
+   // try {
+   //    const authToken = request.cookies.get('auth-token') || null;
+   // const pathname = req.nextUrl.pathname;
+   //    console.log('authToken:', authToken);
 
-   if (!authToken && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/sign-up')) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`); // Redirect unauthenticated users
-   } else if (authToken && request.nextUrl.pathname.startsWith('/login') || authToken && request.nextUrl.pathname.startsWith('/sign-up')) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/`);
-   }
-   return NextResponse.next();
+   //    if (!authToken && !pathname.startsWith(`${process.env.NEXT_PUBLIC_BASE_URL}/login`) && !pathname.startsWith(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-up`)) {
+   //       return NextResponse.redirect(new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/login`));
+
+   //    } else if (authToken && pathname.startsWith(`${process.env.NEXT_PUBLIC_BASE_URL}/login`) || authToken && pathname.startsWith(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-up`)) {
+   //       return NextResponse.redirect(new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/`));
+   //    }
+   //    return NextResponse.next();
+   // } catch (error) {
+   //    console.error('Middleware error:', error);
+   //    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+   // }
+   // const res = NextResponse.next();
+   // const supabase = createMiddlewareClient({ req, res });
+
+   // const { data: { user } } = await supabase.auth.getUser();
+
+   // if (!user) {
+   //    return NextResponse.redirect(new URL('/login', req.url));
+   // }
+
+   // return res;
+
 }
+export const config = {
+   matcher: [
+      '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+   ],
+};
 /*
 const session: User | null = await getUser();
 if (!session || null) {
@@ -116,8 +140,4 @@ return supabaseResponse;
 }
 
 */
-export const config = {
-   matcher: [
-      "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-   ],
-};
+
