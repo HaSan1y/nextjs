@@ -38,35 +38,35 @@ export default function AppSidebar() {
    //    };
    //    fetchUser();
    // }, []);
-   if (userLoading || notesLoading || session !== null) {
-      useEffect(() => {
-         const fetchNotes = async () => {
-            try {
-               const fetchedUser = await getUser();
-               if (fetchedUser && fetchedUser !== null) {
+   // if (userLoading || notesLoading || session !== null) {
+   useEffect(() => {
+      const fetchNotes = async () => {
+         try {
+            const fetchedUser = await getUser();
+            if (fetchedUser && fetchedUser !== null) {
 
-                  console.log(`fetching notes for user ${fetchedUser.id}`);
-                  setSession(fetchedUser);
+               console.log(`fetching notes for user ${fetchedUser.id}`);
+               setSession(fetchedUser);
 
 
-                  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/fetch-all-notes?userId=${fetchedUser.id}`);
-                  const data: Note[] = await response.json();
-                  const sortedNotes = JSON.parse(JSON.stringify(data));
-                  console.log("sortedNotes:", sortedNotes);
-                  setNote(sortedNotes.newestNoteId);
-                  // console.log("fetcheddd notes", data.text, '..', session?.id);
-                  // setNote(data);
-               }
-            } catch (error) {
-               console.error("Error fetching notes:", error);
-            } finally {
-               setNotesLoading(false);
-               setUserLoading(false);
+               const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/fetch-all-notes?userId=${fetchedUser.id}`);
+               const data: Note[] = await response.json();
+               const sortedNotes = JSON.parse(JSON.stringify(data));
+               console.log("sortedNotes:", sortedNotes);
+               setNote(sortedNotes.newestNoteId);
+               // console.log("fetcheddd notes", data.text, '..', session?.id);
+               // setNote(data);
             }
-         };
-         fetchNotes();
-      }, []);
-   }
+         } catch (error) {
+            console.error("Error fetching notes:", error);
+         } finally {
+            setNotesLoading(false);
+            setUserLoading(false);
+         }
+      };
+      fetchNotes();
+   }, [notesLoading, userLoading]);
+   // }
 
    if (!session || session === null) {
       return (

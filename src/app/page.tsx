@@ -38,7 +38,8 @@ export default function HomePage(/*{ searchParams }: Props*/) {
    const [loading, setLoading] = useState(true);
    // const userId = searchParams?.get("userId");
    // const task = searchParams?.get("task");
-   const noteIdParam = searchParams?.get("noteId");
+   const noteIdParam = searchParams?.get("noteId") || "";
+
    const noteId = Array.isArray(noteIdParam) ? noteIdParam[0] : noteIdParam || "";
 
    const { noteText } = useContext(NoteProviderContext);
@@ -54,7 +55,7 @@ export default function HomePage(/*{ searchParams }: Props*/) {
                setSession(currentUser);
             } else {
                console.log("unauthenticated, session expired. Redirecting to login..");
-               window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
+               // window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
             }
 
          } catch (error) {
@@ -65,17 +66,22 @@ export default function HomePage(/*{ searchParams }: Props*/) {
          }
       };
       fetchUser();
-   }, []);
+   }, [loading]);
 
 
    useEffect(() => {
-      if (session) {
+      if (session && noteId) {
          const fetchNotes = async () => {
             try {
                const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/fetch-unique-notes?userId=${session.id}&noteId=${noteId}`);
-               const { note }: { note: Note } = await response.json();
-               const dnote = JSON.parse(JSON.stringify(note));
-               if (!dnote || dnote === null || dnote === undefined || dnote.text === null || !dnote.text) {
+               if (!response.ok) {
+                  console.error("Note not found or invalid note ID");
+                  return;
+               }
+               const dnote = await response.json();
+               console.log("Raw API Response:", dnote);
+
+               if (!dnote || dnote === null || dnote === undefined) {
                   console.error("Note not found or invalid note ID");
                } else {
                   console.log(dnote, "serializeduniqnotes");
@@ -94,7 +100,7 @@ export default function HomePage(/*{ searchParams }: Props*/) {
          };
          fetchNotes();
       }
-   }, []);
+   }, [noteId, session]);
 
    // console.log('user', userId, 'noteId', noteId, 'note', note, 'task', task);
    if (loading) return (<div>Loading...</div>)

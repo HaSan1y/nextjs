@@ -1,15 +1,23 @@
-import { defineConfig } from "eslint/config";
-import tseslint from "@typescript-eslint/eslint-plugin";
-import parser from "@typescript-eslint/parser";
 import { FlatCompat } from '@eslint/eslintrc';
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
 });
 
+const eslintConfig = [  {
+  ignores: ['node_modules/', 'dist/', '.next/'],
+},
+  ...compat.config({
+    extends: ['next/core-web-vitals']
+  })
+];
+
+export default eslintConfig;
+
+/*
 export default defineConfig([
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ["**\*.{ts,tsx}"],
     languageOptions: {
       parser,
       parserOptions: {
@@ -27,4 +35,4 @@ export default defineConfig([
       ]
     }
   }
-]);
+]);*/

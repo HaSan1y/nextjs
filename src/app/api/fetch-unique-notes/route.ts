@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       // const plainNote = JSON.parse(JSON.stringify(note));
       return NextResponse.json(note, { status: 200 });
    } catch (error) {
-      console.error('Err:', error);  //err for client
+      console.error('Err:', error);
       return NextResponse.json({ error: error }, { status: 500 });
    }
 }

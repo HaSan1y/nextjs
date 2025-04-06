@@ -106,7 +106,7 @@ function AskAIButton({ session }: Props) {
                </DialogDescription>
             </DialogHeader>
 
-            <div className="mt-4 flex flex-col gap-8">
+            {/* <div className="mt-4 flex flex-col gap-8">
                {questions.map((question, index) => (
                   <Fragment key={index}>
                      <p className="bg-muted text-muted-foreground ml-auto max-w-[60%] rounded-md px-2 py-1 text-sm">
@@ -121,7 +121,7 @@ function AskAIButton({ session }: Props) {
                   </Fragment>
                ))}
                {isPending && <p className="animate-pulse text-sm">Thinking...</p>}
-            </div>
+            </div> */}
 
             <div
                className="mt-auto flex cursor-text flex-col rounded-lg border p-4"

@@ -183,7 +183,7 @@ const PageTwo = () => {
             {tasks.length === 0 && <p>No tasks found.</p>}
             {tasks.map((task) => (
 
-              <div key={task.id} className="mx-auto bg-black text-white font-extrabold">
+              <div key={task.id + task.title} className="mx-auto bg-black text-white font-extrabold">
                 <span className="mx-auto flex justify-evenly">{task.title}</span>
                 <button onClick={() => handleUpdate(task.id, prompt('New title:', task.title) || task.title)} className="mt-2 w-1/2 border-dotted border-2 border-cyan-700 hover:text-neutral-700">Update Task</button>
                 <button onClick={() => handleDelete(task.id)} className="mt-3 w-1/2 border-2 border-dashed border-red-400 hover:text-neutral-700">Delete Task</button>
