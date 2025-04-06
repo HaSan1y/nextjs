@@ -1,11 +1,9 @@
-// import ClientLayout from "./ClientLayout";
-
+"use client";
 import ClientLayout from "./clientLayout";
 import { ThemeProvider } from "../providers/ThemeProvider";
 import NoteProvider from "../providers/NoteProvider";
 import { SidebarProvider } from "../components/ui/sidebar";
 import { Toaster } from "../components/ui/toaster";
-// import { cookies } from "next/headers";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -24,11 +22,18 @@ type LayoutProps = {
 // };
 
 export default function RootLayout({ children, searchParams, }: LayoutProps) {
-  if (typeof window !== "undefined") {
-    const cookies = document.cookie.split(";").map(cookie => cookie.trim());
-    const isLoggedIn = cookies.some(cookie => cookie.startsWith("sb-access-token="));
-    if (!isLoggedIn) { return <div>no cookie 404</div>; }
-  }
+  // let x;
+  // if (typeof window !== "undefined") {
+  //   const cookies = document.cookie.split(";").map(cookie => cookie.trim());
+  //   const isLoggedIn = cookies.some(cookie => cookie.startsWith("sb-access-token="));
+  //   if (!isLoggedIn && window.location.href !== `${process.env.NEXT_PUBLIC_BASE_URL}/login` && window.location.href !== `${process.env.NEXT_PUBLIC_BASE_URL}/sign-up` && !x) {
+  //     x = true;
+  //     return window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
+
+  //   } else {
+  //     x = false;
+  //   }
+  // }
   return (
     <html lang="en" suppressHydrationWarning>
       <body>

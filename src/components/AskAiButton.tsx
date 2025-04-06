@@ -12,7 +12,6 @@ import {
    DialogTrigger,
 } from "./ui/dialog";
 import { Fragment, useRef, useState, useTransition } from "react";
-//import { useRouter } from "next/router";
 import { Textarea } from "./ui/textarea";
 import { ArrowUpIcon } from "lucide-react";
 // import { askAIAboutNotesAction } from "@/actions/notes";
@@ -23,8 +22,6 @@ type Props = {
 };
 
 function AskAIButton({ session }: Props) {
-   // const router = useRouter();
-
    const [isPending] = useTransition();
 
    const [open, setOpen] = useState(false);

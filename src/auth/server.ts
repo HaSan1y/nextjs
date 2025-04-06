@@ -5,10 +5,10 @@ import { cookies } from 'next/headers'
 import { createClient } from '@supabase/supabase-js';
 // import { User } from '@prisma/client';
 // import type { User } from '@supabase/auth-helpers-nextjs';
+// import type { User } from '@supabase/auth-js';
 // import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 // import { NextApiRequest, NextApiResponse } from 'next';
 // import { NextRequest } from 'next/server';
-// import type { User } from '@supabase/auth-js';
 
 export async function createCookieClient(cookieStore?: ReturnType<typeof cookies>) {
    // headers: {
@@ -45,8 +45,15 @@ export async function createCookieClient(cookieStore?: ReturnType<typeof cookies
             // console.log(`Reconstructed cookie: ${name} = ${combinedValue}`);
             // return combinedValue || (await cookieStore).get(name)?.value;
             async remove(name: string, options: CookieOptions) {
-               // console.log(`Cookie remove: ${name}`);
-               // store.set(name, '', { ...options, maxAge: 0 })
+               const defaultOptions: CookieOptions = {
+                  ...options,
+                  maxAge: 0,
+                  path: '/', // Ensure the path is '/' to remove the cookie globally
+                  // If your cookie has domain or SameSite set, make sure to add those as well
+                  domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN || '', // Set if using a specific domain
+                  sameSite: 'lax', // Or 'Strict' based on how the cookie was set
+                  secure: process.env.NODE_ENV === 'production', // Ensure it's secure in production
+               };
                (await cookieStore).set(name, '', { ...options, maxAge: 0 });
             },
             // async set(data) { console.log('xxset:', data); },
@@ -76,18 +83,17 @@ export async function getSession() {
 
 // creates an user object
 export async function getUser() {
-   // const supabase = createServerComponentClient({ cookies });
-   // const { auth } = await createCookieClient;
    const client = await createCookieClient();
    const auth = client.auth;
+   const userObject = await auth.getUser();
+   if (!userObject) { console.error("Error fetching user on server:plz login",); return null; }
+   // const supabase = createServerComponentClient({ cookies });
+   // const { auth } = await createCookieClient;
    // const supabase = createServerComponentClient({ cookies: () => Promise.resolve(cookies()) });
-   // const supabase = createServerComponentClient(({ cookies }));
    // const supabase = createServerComponentClient({ cookies: await cookies() });
    // const store = await cookieStore;
    // const session = store?.get('session') ?? null;
    // const { data: { session }, error } = await supabase.auth.getSession();
-   const userObject = await auth.getUser();
-   if (!userObject) { console.error("Error fetching user on server:plz login",); return null; }
 
    console.log('userObject retrieved:success');
    return userObject.data.user;

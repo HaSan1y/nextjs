@@ -2,10 +2,9 @@
 // import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../db/prisma";
 import { handleErrors } from "../lib/utils";
+import { /*createCookieClient,*/ getUser } from "../auth/server";
 // import openai from "@/openai";
 // import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
-import { /*createCookieClient,*/ getUser } from "../auth/server";
-// import { cookies } from 'next/headers'
 
 export const createNoteAction = async (noteId: string, text: string) => {
    try {
@@ -32,11 +31,7 @@ export const createNoteAction = async (noteId: string, text: string) => {
 };
 
 export const updateNoteAction = async (noteId: string, text: string) => {
-   // const cookieStore = await cookies()
    try {
-      // const supabase = await createCookieClient(cookieStore);
-      // const supabase = await createCookieClient(Promise.resolve(cookieStore));
-      // const { data: { user }, error } = await supabase.auth.getUser()
       const user = await getUser();
       if (!user) throw new Error("err:You must be logged in to update a note");
 
@@ -47,7 +42,7 @@ export const updateNoteAction = async (noteId: string, text: string) => {
 
       return { errorMessage: null };
    } catch (error) {
-      return console.log(error);
+      return handleErrors(error);
    }
 };
 
@@ -65,7 +60,7 @@ export const deleteNoteAction = async (noteId: string) => {
 
       return { errorMessage: null };
    } catch (error) {
-      return console.log(error);
+      return handleErrors(error);
    }
 };
 

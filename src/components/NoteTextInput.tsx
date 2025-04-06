@@ -22,6 +22,7 @@ function NoteTextInput({ noteId, startingNoteText }: Props) {
          setNoteText(startingNoteText);
       }
    }, [startingNoteText, noteIdParam, noteId, setNoteText]);
+   // ^best practice to add all dependencies, trigger starting with the most impotant one, startingNoteText
 
    const handleUpdateNote = (e: ChangeEvent<HTMLTextAreaElement>) => {
       const text = e.target.value;

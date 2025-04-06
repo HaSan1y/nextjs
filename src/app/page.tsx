@@ -1,6 +1,4 @@
 "use client";
-// import { cookies } from 'next/headers' 
-// import { redirect } from "next/navigation";  redirect 4 serverside
 // import { useSession } from "@/providers/SessionProvider";
 
 import NoteTextInput from "../components/NoteTextInput";
@@ -9,12 +7,14 @@ import HomeToast from "../components/HomeToast";
 import { getUser } from "../auth/server";
 import { useEffect, useState, useContext } from "react";
 // import type { User } from '@supabase/auth-helpers-nextjs';
-import type { User } from '@supabase/auth-js';
+// import type { User } from '@supabase/auth-js';
+import type { User } from "@supabase/supabase-js";
 import type { Note } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 
 import { NoteProviderContext } from "../providers/NoteProvider";
-import { useRefresh } from "@/providers/RefreshProvider";
+import { useAuth } from "@/providers/RefreshProvider";
+import AskAIButton from "@/components/AskAiButton";
 
 // type Props = {
 //    searchParams?: {
@@ -26,12 +26,13 @@ import { useRefresh } from "@/providers/RefreshProvider";
 // };
 
 export default function HomePage(/*{ searchParams }: Props*/) {
-   const { refresh, setRefresh } = useRefresh();
-   if (refresh) {
-      // reload the page
-      window.location.reload();
-      setRefresh(false);
-   }
+   const { authState, setAuthState } = useAuth();
+   // const { refresh, setRefresh } = useRefresh();
+   // if (refresh) {
+   //    // reload the page
+   //    window.location.reload();
+   //    setRefresh(false);
+   // }
 
    const searchParams = useSearchParams();
    const [session, setSession] = useState<User | null>(null);
@@ -127,11 +128,16 @@ export default function HomePage(/*{ searchParams }: Props*/) {
 
    return (
       <div className="flex h-full flex-col items-center gap-4">
+         <div className="flex w-full max-w-4xl justify-end gap-2">
+            <AskAIButton session={session} />
+            <NewNoteButton user={session} note={noteText} />
+         </div>
          <h1 className="text-2xl font-bold">Welcome, {session?.email}</h1>
          <p className="text-lg">Here are your notes:</p>
-         <NewNoteButton user={session} note={noteText} />
+
          <NoteTextInput noteId={note?.id ?? ""} startingNoteText={note?.text ?? ""} />
-         {/* <AskAIButton user={session.user} /> */}
+         {authState.authenticated ? "Yes" : "No"}
+
          <HomeToast />
       </div>
    );

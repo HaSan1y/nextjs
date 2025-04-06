@@ -1,8 +1,20 @@
+"use server";  //must run on server
 // import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from 'next/server';
 // import { cookies } from "next/headers";
 // import { getUser } from "./auth/server";
 // import type { User } from '@supabase/auth-helpers-nextjs';
-export async function middleware(/*request: NextRequest*/) { }
+export async function middleware(request: NextRequest) {
+   const authToken = request.cookies.get('auth-token');
+   // Optionally validate token here
+
+   if (!authToken && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/sign-up')) {
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`); // Redirect unauthenticated users
+   } else if (authToken && request.nextUrl.pathname.startsWith('/login') || authToken && request.nextUrl.pathname.startsWith('/sign-up')) {
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/`);
+   }
+   return NextResponse.next();
+}
 /*
 const session: User | null = await getUser();
 if (!session || null) {

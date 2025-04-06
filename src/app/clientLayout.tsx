@@ -6,23 +6,15 @@ import type { User } from '@supabase/auth-js';
 // import type { User, createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 // import type { User } from '@supabase/ssr';
 // import type { Tasks, User } from "@prisma/client";
-
-
-// import { useEffect, useState } from "react";
 // import { useSearchParams } from "next/navigation";
-// import PageTwo from "./PageTwo";
+
 import { SessionProvider } from "@/providers/SessionProvider";
 import Header from "@/components/Header";
 import React from "react";
 import AppSidebar from "@/components/AppSidebar";
-// import { redirect } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import PageTwo from "./PageTwo";
-import { RefreshProvider } from "@/providers/RefreshProvider";
-// import { useRouter } from "next/navigation";
-
-
-// import { cookies } from 'next/headers'
+import { AuthProvider } from "@/providers/RefreshProvider";
 
 type LayoutProps = {
    children: React.ReactNode;
@@ -105,19 +97,22 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
    // }
    // console.log("user from layout:", user);
    return (
-      <RefreshProvider>
+      <AuthProvider>
          <SessionProvider initialSession={user}>
             {user ? <AppSidebar /> : null}
-            <Header /*session={session}*/ />
-            {user ? <SidebarTrigger /> : null}
-            <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900">
-               {children}
-            </main>
-            {user ?
-               <PageTwo />
-               : (<p>Please log in to see your tasks.</p>)}
+            <div className="flex min-h-screen w-full flex-col relative">
+               <Header /*session={session}*/ />
+               <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900 relative">
+                  <SidebarTrigger className="top-1 place-self-end" />
+
+                  {children}
+               </main>
+               {user ?
+                  <PageTwo />
+                  : (<p>Please log in to see your tasks.</p>)}
+            </div>
          </SessionProvider>
-      </RefreshProvider>
+      </AuthProvider>
    );
 }
 
@@ -131,21 +126,6 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
 // const tasks = JSON.parse(text);
 // console.log("Parsed data:", tasks);
 
-// const [tasks, setTasks] = useState<{ id: string; title: string }[]>([]);
-
-// useEffect(() => {
-//   async function fetchTasks() {
-// try {
-// setTasks(data);
-// } catch (error) {
-//   console.error("Error fetching tasks:", error);
-// }
-// }
-//   fetchTasks();
-// }, []);
-
-// const user = await getUser();
-// console.log('user', user);
 
 // const supabase = createServerComponentClient({ cookies })
 // const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -165,17 +145,14 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
 //   };
 //   fetchSession();
 // }, []);
-
 // if (!session) {
 //   console.log('session', session);
 // }
-
 // useEffect(() => {
 //   console.log('session', session);
 // }, [session]);
 
-
-// {/* <Head> */}
+// {/* <Head> */}    htmx
 {/* <title>HTMX CRUD with Supabase</title> */ }
 {/* <Script src="" strategy="afterInteractive" /> either async or this way*/ }
 {/* <script src="https://unpkg.com/htmx.org@1.6.1" async></script> */ }

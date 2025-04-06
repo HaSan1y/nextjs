@@ -13,6 +13,7 @@ import type { User } from '@supabase/auth-js';
 import { useEffect, useState } from "react";
 // import { useRouter } from "next/navigation";
 import { getUser } from "./../auth/server";
+import { SidebarTrigger } from "./ui/sidebar";
 
 // import { useSession } from "@/providers/SessionProvider";
 // interface HeaderProps { session: Session; }
@@ -91,7 +92,11 @@ const Header = () => {
    console.log('session...', session);
    // If session is available, render the protected route
    return (
-      <header className="flex items-center justify-between w-full max-w-4xl px-4 py-4 mx-auto text-slate-200 dark:text-slate-200 bg-popover dark:bg-slate-900 border-b border-slate-700 dark:border-slate-700" style={{ boxShadow: shadows.lg }}>
+      <header className="bg-popover relative flex h-24 w-full items-center justify-between px-3 sm:px-8"
+         style={{
+            boxShadow: shadows.lg,
+         }}>
+
          <Link href="./" className="flex items-center gap-2">Home
             <Image src="./vercel.svg" alt="Vercel Logo" className="dark:invert"
                priority={true} width={0} height={0}

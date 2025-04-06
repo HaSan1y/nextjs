@@ -1,7 +1,7 @@
 "use client"
 
 import { useToast } from "../hooks/use-toast"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 import { CardContent, CardFooter } from "./ui/card"
 import { Label } from "./ui/label"
 import { useState } from "react"
@@ -15,7 +15,7 @@ type Props = { type: 'login' | 'signUp' }
 
 function AuthForm({ type }: Props) {
    const isLoginForm = type === 'login'
-   const router = useRouter()
+   // const router = useRouter()
    const { toast } = useToast()
 
    const [isPending, setIsPending] = useState(false);
@@ -48,9 +48,11 @@ function AuthForm({ type }: Props) {
                description: successMessage,
                variant: "success",
             });
-            if (!router) return;
-            const absoluteUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/?toastType=${type}`;
-            router.replace(absoluteUrl);
+            // if (!router) return;
+            window.location.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/?toastType=${type}`);
+            // window.location.replace(data.redirectUrl) data = await response.json(); {redirectUrl: string}
+            // router.refresh();
+            // router.replace(absoluteUrl);
             // router.refresh()
             //router.push('/')  // to home page, but can go back using back button
          } else {
