@@ -49,7 +49,7 @@ function AuthForm({ type }: Props) {
                variant: "success",
             });
             // if (!router) return;
-            window.location.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/?toastType=${type}`);   //sends to login w cookie, so that client gets send to homepage which results in correct react render client=server state
+            window.location.replace(`/?toastType=${type}`);   //sends to login w cookie, so that client gets send to homepage which results in correct react render client=server state
             // window.location.replace(data.redirectUrl) data = await response.json(); {redirectUrl: string}
             // router.refresh();
             // router.replace(absoluteUrl);

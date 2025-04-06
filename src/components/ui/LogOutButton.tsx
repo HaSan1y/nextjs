@@ -30,7 +30,7 @@ function LogOutButton() {
 
                   if (response.ok) {
                      // Optionally, you can redirect after successful logout
-                     window.location.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/login`)
+                     window.location.replace(`/login`)
                      // document.cookie = 'auth-token=; Max-Age=0; path=/;'
                      // document.cookie = 'auth-token=; Max-Age=0; path=/; domain=' + window.location.hostname;
                      // document.cookie = 'auth-token=; Max-Age=0; path=/; domain=' + window.location.hostname + '; SameSite=Lax';

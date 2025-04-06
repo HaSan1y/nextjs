@@ -55,7 +55,7 @@ export default function HomePage(/*{ searchParams }: Props*/) {
                setSession(currentUser);
             } else {
                console.log("unauthenticated, session expired. Redirecting to login..");
-               // window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
+               window.location.href = `/login`;
             }
 
          } catch (error) {

@@ -24,7 +24,7 @@ function NewNoteButton({ user, note }: Props) {
 
          const uuid = uuidv4();
          await createNoteAction(uuid, note || "");
-         window.location.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/`);
+         window.location.replace(`/`);
          // router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/?noteId=${uuid}&toastType=newNote`);
 
          setLoading(false);
