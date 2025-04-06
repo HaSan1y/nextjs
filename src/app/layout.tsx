@@ -4,6 +4,7 @@ import { ThemeProvider } from "../providers/ThemeProvider";
 import NoteProvider from "../providers/NoteProvider";
 import { SidebarProvider } from "../components/ui/sidebar";
 import { Toaster } from "../components/ui/toaster";
+import { Suspense } from "react";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -36,23 +37,11 @@ export default function RootLayout({ children, searchParams, }: LayoutProps) {
   // }
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <NoteProvider>
-            <SidebarProvider>
-              <div className="flex flex-col min-h-screen w-full bg-slate-800 dark:bg-slate-900 text-slate-200 dark:text-slate-200">
-                <ClientLayout searchParams={searchParams} >{children}</ClientLayout>
-              </div >
-            </SidebarProvider >
-            <Toaster />
-          </NoteProvider >
-        </ThemeProvider >
-      </body>
+      <body className="flex flex-col min-h-screen w-full bg-slate-800 dark:bg-slate-900 text-slate-200 dark:text-slate-200">
+        <Suspense fallback={<div>Loading...</div>}>
+          <ClientLayout searchParams={searchParams} >{children}</ClientLayout>
+        </Suspense>
+      </body >
     </html >
   );
 }

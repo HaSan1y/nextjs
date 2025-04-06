@@ -12,9 +12,12 @@ import { SessionProvider } from "@/providers/SessionProvider";
 import Header from "@/components/Header";
 import React from "react";
 import AppSidebar from "@/components/AppSidebar";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import PageTwo from "./PageTwo";
 import { AuthProvider } from "@/providers/RefreshProvider";
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/providers/ThemeProvider";
+import NoteProvider from "@/providers/NoteProvider";
 
 type LayoutProps = {
    children: React.ReactNode;
@@ -99,18 +102,28 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
    return (
       <AuthProvider>
          <SessionProvider initialSession={user}>
-            {user ? <AppSidebar /> : null}
-            <div className="flex min-h-screen w-full flex-col relative">
-               <Header /*session={session}*/ />
-               <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900 relative">
-                  <SidebarTrigger className="top-1 place-self-end" />
-
-                  {children}
-               </main>
-               {user ?
-                  <PageTwo />
-                  : (<p>Please log in to see your tasks.</p>)}
-            </div>
+            <ThemeProvider
+               attribute="class"
+               defaultTheme="system"
+               enableSystem
+               disableTransitionOnChange
+            >
+               <NoteProvider>
+                  <SidebarProvider>
+                     <div className="flex min-h-screen w-full flex-col relative">
+                        <Header /*session={session}*/ />
+                        {user ? <AppSidebar /> : null}
+                        <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900 relative">
+                           <SidebarTrigger className="top-1 place-self-end" />
+                           {children}
+                        </main>
+                        {user ?
+                           <PageTwo />
+                           : (<div>Please log in to see your tasks.</div>)}
+                     </div>      </SidebarProvider >
+                  <Toaster />
+               </NoteProvider >
+            </ThemeProvider >
          </SessionProvider>
       </AuthProvider>
    );
