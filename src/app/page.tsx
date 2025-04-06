@@ -5,7 +5,7 @@ import NoteTextInput from "../components/NoteTextInput";
 import NewNoteButton from "../components/NewNoteButton";
 import HomeToast from "../components/HomeToast";
 import { getUser } from "../auth/server";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, Suspense } from "react";
 // import type { User } from '@supabase/auth-helpers-nextjs';
 // import type { User } from '@supabase/auth-js';
 import type { User } from "@supabase/supabase-js";
@@ -126,17 +126,19 @@ export default function HomePage(/*{ searchParams }: Props*/) {
 
    return (
       <div className="flex h-full flex-col items-center gap-4">
-         <div className="flex w-full max-w-4xl justify-end gap-2">
-            <AskAIButton session={session} />
-            <NewNoteButton user={session} note={noteText} />
-         </div>
-         <h1 className="text-2xl font-bold">Welcome, {session?.email}</h1>
-         <p className="text-lg">Here are your notes:</p>
+         <Suspense>
+            <div className="flex w-full max-w-4xl justify-end gap-2">
+               <AskAIButton session={session} />
+               <NewNoteButton user={session} note={noteText} />
+            </div>
+            <h1 className="text-2xl font-bold">Welcome, {session?.email}</h1>
+            <p className="text-lg">Here are your notes:</p>
 
-         <NoteTextInput noteId={note?.id ?? ""} startingNoteText={note?.text ?? ""} />
-         {/* {authState.authenticated ? "Yes" : "No"} */}
+            <NoteTextInput noteId={note?.id ?? ""} startingNoteText={note?.text ?? ""} />
+            {/* {authState.authenticated ? "Yes" : "No"} */}
 
-         <HomeToast />
+            <HomeToast />
+         </Suspense>
       </div>
    );
 }
