@@ -136,7 +136,7 @@ export default function HomePage(/*{ searchParams }: Props*/) {
          <p className="text-lg">Here are your notes:</p>
 
          <NoteTextInput noteId={note?.id ?? ""} startingNoteText={note?.text ?? ""} />
-         {authState.authenticated ? "Yes" : "No"}
+         {/* {authState.authenticated ? "Yes" : "No"} */}
 
          <HomeToast />
       </div>

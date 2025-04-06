@@ -3,7 +3,7 @@
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { createNoteAction } from "../actions/notes";
 import type { User, } from "@supabase/supabase-js";
@@ -12,7 +12,7 @@ import type { User, } from "@supabase/supabase-js";
 type Props = { user: User | null; note: string; };
 
 function NewNoteButton({ user, note }: Props) {
-   // const router = useRouter();
+   const router = useRouter();
 
    const [loading, setLoading] = useState(false);
 
@@ -26,6 +26,7 @@ function NewNoteButton({ user, note }: Props) {
 
          const uuid = uuidv4();
          await createNoteAction(uuid, note || "");
+         window.location.replace(`${process.env.NEXT_PUBLIC_BASE_URL}/`);
          // router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/?noteId=${uuid}&toastType=newNote`);
 
          setLoading(false);

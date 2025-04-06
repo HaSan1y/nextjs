@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(serializedTasks, { status: 200 });
    } catch (error) {
+      console.error('Err:', error)  //err for client
       return NextResponse.json({ tasks: error }, { status: 500 });
    }
 }

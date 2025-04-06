@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(newTask, { status: 200 });
       // }
    } catch (error) {
+      console.error('Task add err:', error); //err for client
       return NextResponse.json({ error: error }, { status: 500 });
    }
 }

@@ -21,5 +21,7 @@ export async function GET(request: NextRequest) {
    if (!newestNoteId) {
       return NextResponse.json({ newestNoteId: "" }, { status: 401 });
    }
-   return NextResponse.json({ newestNoteId: newestNoteId?.id, }, { status: 200 });
+   return NextResponse.json({
+      newestNoteId: newestNoteId?.id,
+   }, { status: 200 });
 }

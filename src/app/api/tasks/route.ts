@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
       // if (error) { return NextResponse.json({ error: error }, { status: 404 }) }
       return NextResponse.json({ error: null }, { status: 200 });
    } catch (error) {
+      console.error('Err:', error)  //err for client
       return NextResponse.json({ error: error }, { status: 500 });
    }
 }

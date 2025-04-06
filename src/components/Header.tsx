@@ -89,7 +89,7 @@ const Header = () => {
       // You can show a loading spinner or skeleton here
       return <div>Loading...</div>;
    }
-   console.log('session...', session);
+   // console.log('session...', session);
    // If session is available, render the protected route
    return (
       <header className="bg-popover relative flex h-24 w-full items-center justify-between px-3 sm:px-8"

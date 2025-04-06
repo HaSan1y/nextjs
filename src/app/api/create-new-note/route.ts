@@ -17,6 +17,7 @@ export async function POST(request: NextRequest) {
    const { id } = await prisma.note.create({ data: { authorId: userId, text: "" } });
 
    if (!id) {
+      console.error("Error creating note");
       return NextResponse.json({ error: null }, { status: 500 });
    }
 
