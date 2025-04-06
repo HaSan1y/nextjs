@@ -1,22 +1,18 @@
-import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
 
-interface AuthResponse {
-   authenticated: boolean;
-   user?: string;
-}
+// interface AuthResponse {
+//    authenticated: boolean;
+//    user?: string;
+// }
 
-export default async function handler(
-   req: Request,
-   res: {
-      status: (code: number) => {
-         json: (body: AuthResponse) => void;
-      };
+export async function GET(req: NextRequest): Promise<NextResponse> {
+   const authToken = req.cookies.get('auth-token');
+
+   if (!authToken) {
+      return NextResponse.json({ authenticated: false }, { status: 401 });
    }
-) {
-   const authToken = (await cookies()).get('auth-token');
-   if (!authToken) return res.status(401).json({ authenticated: false });
 
    const user = authToken.value;
-   // const user = await validateToken(authToken);
-   return res.status(200).json({ authenticated: true, user });
+   // const user = await validateToken(authToken); // Uncomment if token validation logic is added
+   return NextResponse.json({ authenticated: true, user }, { status: 200 });
 }
