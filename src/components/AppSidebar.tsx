@@ -22,7 +22,7 @@ import type { User } from '@supabase/auth-js';
 
 export default function AppSidebar() {
    const [session, setSession] = useState<User | null>(null);
-   const [notes, setNote] = useState<Note[]>([]);
+   const [notes, setNote] = useState<Note[] | undefined>(undefined);
    const [userLoading, setUserLoading] = useState(true);
    const [notesLoading, setNotesLoading] = useState(true);
 
@@ -43,51 +43,60 @@ export default function AppSidebar() {
       const fetchNotes = async () => {
          try {
             const fetchedUser = await getUser();
-            if (fetchedUser && fetchedUser !== null) {
+            if (fetchedUser) {
 
                console.log(`fetching notes for user ${fetchedUser.id}`);
                setSession(fetchedUser);
 
 
                const response = await fetch(`/api/fetch-all-notes?userId=${fetchedUser.id}`);
+               if (!response.ok) {
+                  throw new Error(`API request failed with status ${response.status}`);
+               }
                const data: Note[] = await response.json();
-               const sortedNotes = JSON.parse(JSON.stringify(data));
-               console.log("sortedNotes:", sortedNotes);
-               setNote(sortedNotes.newestNoteId);
+               // const sortedNotes = JSON.parse(JSON.stringify(data));
+               // console.log("sortedNotes:", sortedNotes);
+               // setNote(sortedNotes.newestNoteId);
                // console.log("fetcheddd notes", data.text, '..', session?.id);
                // setNote(data);
+               // Assuming 'data' is the array of notes.
+               // The previous line `setNote(sortedNotes.newestNoteId)` was likely causing `notes` to be undefined
+               // if `sortedNotes` was an array and `newestNoteId` was not a property of an array.
+               console.log("Fetched notes data:", data);
+               if (Array.isArray(data)) {
+                  setNote(data); // Correctly set the array of notes
+               } else {
+                  console.error("Fetched notes data is not an array:", data);
+                  setNote([]); // Fallback to empty array if data is not as expected
+               }
+            } else {
+               setSession(null);
+               setNote([]); // No user, so no notes or empty notes
             }
          } catch (error) {
             console.error("Error fetching notes:", error);
+            setNote([]);
          } finally {
             setNotesLoading(false);
             setUserLoading(false);
          }
       };
       fetchNotes();
-   }, [notesLoading, userLoading]);
-   // }
+      // }, [notesLoading, userLoading]);
+   }, []);
 
-   if (!session || session === null) {
+   // if (!session || session === null) {
+   if (userLoading || notesLoading || !session) {
       return (
          <Sidebar>
             <SidebarHeader />
             <SidebarContent>
-               <p>Please log in to see your notes.</p>
+               <p>Loading user information...</p>
             </SidebarContent>
             <SidebarFooter />
          </Sidebar>
       );
    }
-
-   if (userLoading || notesLoading) {
-      return <div>Loading...</div>; // Or a loading spinner
-   }
-   // const user = await getUser()
-   // const cookieStore = cookies()
-   // const supabase = await createClient(cookieStore);
-   // const { data: { user }, error } = await supabase.auth.getUser()
-
 
    return (
       <Sidebar>
@@ -101,8 +110,12 @@ export default function AppSidebar() {
                      <p>
                         <Link href="/login" className="underline">Log in</Link>{" "} to see your notes
                      </p>)}
+
                </SidebarGroupLabel>
-               {session ? <SidebarGroupContent notes={notes} /> : null}
+               {/* notes can be undefined initially or [] on error/no notes.
+                   SidebarGroupContent is designed to handle notes: Note[] | undefined.
+               */}
+               <SidebarGroupContent notes={notes} />
             </SidebarGroup>
          </SidebarContent >
          <SidebarFooter />

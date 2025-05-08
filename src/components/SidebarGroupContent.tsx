@@ -34,25 +34,28 @@ import SelectNoteButton from "./SelectNoteButton";
 import DeleteNoteButton from "./DeleteNoteButton";
 
 type Props = {
-   notes: Note[];
+   notes: Note[] | undefined;
 };
 
 function SidebarGroupContent({ notes }: Props) {
    const [searchText, setSearchText] = useState("");
-   const [localNotes, setLocalNotes] = useState(notes);
+   // Initialize with notes, defaulting to an empty array if notes is undefined
+   const [localNotes, setLocalNotes] = useState<Note[]>(notes || []);
 
    useEffect(() => {
-      setLocalNotes(notes);
+      setLocalNotes(notes || []);
    }, [notes]);
 
-   const fuse = useMemo(() => {   //usememo=only create a new instance of Fuse when localNotes changes
-      return new Fuse(localNotes, {
+   const fuse = useMemo(() => {
+      // localNotes is guaranteed to be an array here
+      return new Fuse(localNotes, { // Fuse expects an array
          keys: ["text"],
          threshold: 0.4,
       });
    }, [localNotes]);
 
-   const filteredNotes = searchText
+   // filteredNotes will always be an array
+   const filteredNotes: Note[] = searchText
       ? fuse.search(searchText).map((result) => result.item)
       : localNotes;
 
@@ -75,16 +78,23 @@ function SidebarGroupContent({ notes }: Props) {
          </div>
 
          <SidebarMenu className="mt-4">
-            {filteredNotes.map((note) => (
-               <SidebarMenuItem key={note.id} className="group/item">
-                  <SelectNoteButton note={note} />
+            {filteredNotes.length > 0 ? (
+               filteredNotes.map((note) => (
+                  <SidebarMenuItem key={note.id} className="group/item">
+                     <SelectNoteButton note={note} />
 
-                  <DeleteNoteButton
-                     noteId={note.id}
-                     deleteNoteLocally={deleteNoteLocally}
-                  />
-               </SidebarMenuItem>
-            ))}
+                     <DeleteNoteButton
+                        noteId={note.id}
+                        deleteNoteLocally={deleteNoteLocally}
+                     />
+                  </SidebarMenuItem>
+               ))) : (
+               <p className="p-2 text-sm text-muted-foreground">
+                  {searchText ? "No notes match your search." :
+                     (notes === undefined ? "Loading notes..." : "No notes available.")}
+               </p>
+            )
+            }
          </SidebarMenu>
       </SidebarGroupContentShadCN>
    );

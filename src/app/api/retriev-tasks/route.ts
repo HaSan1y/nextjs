@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
    if (!userId) { return NextResponse.json({ tasks: null }, { status: 400 }); }
    try {
       const tasks = await prisma.tasks.findMany({
-         select: { id: true, title: true },
+         select: { id: true, title: true, },
+         where: { user_Id: userId },
       });
 
       if (!tasks) {

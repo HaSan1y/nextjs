@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+// import type{}
 
 // interface AuthResponse {
 //    authenticated: boolean;

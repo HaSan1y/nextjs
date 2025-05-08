@@ -18,14 +18,14 @@ export async function GET(request: NextRequest) {
             orderBy: { updatedAt: "desc" },
          })
 
-      if (!notes || notes.length === 0) {
-         return NextResponse.json({
-            notes: null,
-         }, { status: 401 });
-      }
-      return NextResponse.json({
-         newestNoteId: notes,
-      }, { status: 200 });
+      /*   if (!notes || notes.length === 0) {
+            return NextResponse.json({
+               notes: null,
+            }, { status: 401 });
+         }*/
+      return NextResponse.json(
+         notes,
+         { status: 200 });
    } catch (error) {
       console.error("Error fetching notes:", error);
       return NextResponse.json({ notes: null }, { status: 500 });

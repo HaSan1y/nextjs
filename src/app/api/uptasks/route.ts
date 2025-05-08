@@ -48,6 +48,15 @@ export async function GET(request: NextRequest) {
       // console.log("Session userId:", session?.user?.id)
 
       // const { data, error } = await supabase.from('Tasks').update({ title }).eq('id', id,).eq('user_Id', session?.user.id);
+
+      //get supabase user
+      // supabase.auth.getUser().then(async ({ data: { user },  }) => {
+      // let { data: Users, error}=await supabase,from('Users').select('*').eq('email', user?.email);
+      // setUserId(Users[0].id);
+      // console.log("UserId:", Users[0].id);
+
+      // insert to supabase
+      // const { data, error } = await supabase.from('Tasks').update({ title }).eq('id', id,).eq('user_Id', session?.user.id);
       await prisma.tasks.update({
          where: {
             id: id,
@@ -64,3 +73,5 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error }, { status: 500 });
    }
 }
+//useeffect(() => {X()}, []) calls the function once when the component mounts, and not on every render.
+//folder (m) will not be considered as a route

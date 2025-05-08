@@ -79,15 +79,15 @@ export default function HomePage(/*{ searchParams }: Props*/) {
                   return;
                }
                const dnote = await response.json();
-               console.log("Raw API Response:", dnote);
+               // console.log("Raw API Response:", dnote);
 
                if (!dnote || dnote === null || dnote === undefined) {
                   console.error("Note not found or invalid note ID");
                } else {
-                  console.log(dnote, "serializeduniqnotes");
+                  // console.log(dnote, "serializeduniqnotes");
                   setNote(dnote);
                }
-               console.log("fetched notes", dnote);
+               // console.log("fetched notes", dnote);
             } catch (error) {
                console.error("Error fetching notes:", error);
             } finally {

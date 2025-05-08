@@ -1,11 +1,11 @@
 "use server";  //must run on server
 // import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from 'next/server';
+// import { NextResponse, type NextRequest } from 'next/server';
 // import { cookies } from "next/headers";
 // import { getUser } from "./auth/server";
 // import type { User } from '@supabase/auth-helpers-nextjs';
 // import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-export async function middleware(req: NextRequest) {
+export async function middleware(/*req: NextRequest*/) {
    // try {
    //    const authToken = request.cookies.get('auth-token') || null;
    // const pathname = req.nextUrl.pathname;
@@ -55,8 +55,8 @@ let supabaseResponse = NextResponse.next({
 });
 
 const supabase = createServerClient(
-   process.env.SUPABASE_URL!,
-   process.env.SUPABASE_ANON_KEY!,
+   process.env.new_SUPABASE_URL!,
+   process.env.new_SUPABASE_ANON_KEY!,
    {
       cookies: {
          async getAll() {

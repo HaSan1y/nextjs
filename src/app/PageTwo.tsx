@@ -18,7 +18,7 @@ import useCudTasks from '@/hooks/useCudTasks';
 // const PageTwo = ({ tasks: initialTasks, session }: { tasks: { id: string; title: string; session: Session }[] },) => {
 
 const PageTwo = () => {
-  console.log('task props retriev page2:success', 'user: also success');
+  // console.log('task props retriev page2:success', 'user: also success');
   const { tasks, loading, loadTasks } = useLoadTasks();
   const { createTask, createDummy, updateTask, deleteTask, loading: bload, error } = useCudTasks();
 

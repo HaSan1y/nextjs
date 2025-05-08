@@ -1,10 +1,11 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 // import type { User } from "@supabase/auth-helpers-nextjs";
-import type { User } from '@supabase/auth-js';
+// import type { User } from '@supabase/auth-js';
 // import type { User } from "@prisma/client";
 import { getUser } from "./../auth/server";
 // import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import type { User } from "@supabase/supabase-js";
 
 interface SessionContextType {
    session: User | null;

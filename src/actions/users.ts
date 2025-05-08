@@ -51,7 +51,7 @@ export const logOutAction = async () => {
       const { auth } = await createCookieClient();
       const { error } = await auth.signOut();
 
-      if (error) { throw new Error('err: ' + error.code || "Logout failed"); }
+      if (error) { throw new Error('err: ' + error || "Logout failed"); }
       // return redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
 
       // const sessionData = await response.json();
@@ -81,35 +81,67 @@ export const signUpAction = async (email: string, password: string) => {
          email,
          password
       })
-      if (error) throw new Error('err: ' + error.code || "Signup failed");
-
-      const userID = data.user?.id
-      if (!userID) {
-         throw new Error('Unique constraint failed on the fields: (`email`)')
+      if (error) {
+         // Handles "User already registered", "Password should be at least 6 characters", etc.
+         throw new Error(error.message || "Signup failed due to a Supabase error.");
       }
-      if (!data || !data.session || !data.session.access_token) {
-         throw new Error("Invalid response from server");
-      }
-      const accessToken = data.session.access_token;
-      (await cookies()).set('auth-token', accessToken, {
-         httpOnly: true,
-         secure: process.env.NODE_ENV === 'production',
-         maxAge: 60 * 60 * 24 * 7, // 7 days
-      });
-      await prisma.user.create({
-         data: { id: userID, email }
-      })
 
-      return { successMessage: 'User created successfully' };
+      if (!data || !data.user || !data.user.id || !data.user.email) {
+         console.log("Signup response missing user data:", data);
+         throw new Error("Invalid response from server: User data not found after sign up.");
+      }
+      const userID = data.user.id;
+      const userEmail = data.user.email; // Use email from Supabase response
+
+      // Create the user in Prisma database.
+      // This happens whether email confirmation is pending or not,
+      // as Supabase has created the user.
+      try {
+         await prisma.user.create({
+            data: { id: userID, email: userEmail }
+         });
+      } catch (prismaError: any) {
+         // This could happen if there's a race condition or if the user somehow
+         // already exists in Prisma but not in Supabase (unlikely for a new signup).
+         // Supabase's `auth.signUp` should typically error out if the user (email) already exists on their end.
+         console.error("Error creating user in Prisma DB after Supabase signup:", prismaError);
+         // If it's a unique constraint violation on email or id in Prisma,
+         // it suggests a potential data inconsistency.
+         // For now, we'll let the original Supabase success dictate the outcome,
+         // but this should be logged and investigated.
+         if (prismaError.code !== 'P2002') { // P2002 is unique constraint violation
+            throw new Error("Failed to record user in local database after successful Supabase signup.");
+         }
+         console.warn(`Prisma unique constraint violation for user ${userID}/${userEmail}, but Supabase signup was successful. Continuing.`);
+      }
+      // Check if a session was returned (i.e., user is auto-logged in, email confirmation might be off)
+      if (data.session && data.session.access_token) {
+         const accessToken = data.session.access_token;
+         (await cookies()).set('auth-token', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+         });
+         return { successMessage: 'User created and logged in. Please check your email for a verification link if applicable.' };
+      } else if (data.user && !data.session) {
+         // Email confirmation is pending. User is created in Supabase and Prisma, but not logged in.
+         return { successMessage: 'User created. Please check your email to confirm your account.' };
+      } else {
+         // Fallback for any other unexpected structure of `data`
+         console.log("Signup response (unhandled state):", data);
+         throw new Error("Invalid or unhandled response from server after sign up." + JSON.stringify(data));
+      }
    } catch (error) {
       if (error instanceof Error) {
-         console.error('Error in signupAction:', error)
+         if (error.message.includes("User already registered")) { // More specific message
+            return { errorMessage: "This email is already registered." };
+         }
          return { errorMessage: error.message }
       }
-      return { errorMessage: 'Error signup' }
+      return { errorMessage: 'Error validating input:' }
    }
 }
-
+//Unreachable code
 // const handleLogout = async () => {
 //    try {
 //        await fetch('/api/logout', { method: 'POST' });

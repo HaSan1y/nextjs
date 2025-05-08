@@ -111,16 +111,17 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
                <NoteProvider>
                   <SidebarProvider>
                      <div className="flex min-h-screen w-full flex-col relative">
-                        <Header /*session={session}*/ />
-                        {user ? <AppSidebar /> : null}
-                        <main className="flex flex-1 flex-col justify-between px-4 pt-10 xl:px-8 caret-red-900 relative">
-                           <SidebarTrigger className="top-1 place-self-end" />
+                        <Header />
+                        <AppSidebar />
+                        <SidebarTrigger className="place-self-end" />
+                        <main className="flex flex-1 flex-col justify-between px-4 pt-10 relative">
                            {children}
                         </main>
                         {user ?
                            <PageTwo />
                            : (<div>Please log in to see your tasks.</div>)}
-                     </div>      </SidebarProvider >
+                     </div>
+                  </SidebarProvider >
                   <Toaster />
                </NoteProvider >
             </ThemeProvider >
@@ -165,8 +166,8 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
 //   console.log('session', session);
 // }, [session]);
 
-// {/* <Head> */}    htmx
-{/* <title>HTMX CRUD with Supabase</title> */ }
-{/* <Script src="" strategy="afterInteractive" /> either async or this way*/ }
-{/* <script src="https://unpkg.com/htmx.org@1.6.1" async></script> */ }
-{/* </Head> */ }
+{/* <Head>     htmx
+ <title>HTMX CRUD with Supabase</title> 
+ <script src="" strategy="afterInteractive" /> //or async v //| beforeInteractive|lazyOnload
+ <script src="https://unpkg.com/htmx.org@1.6.1" async></script> 
+ </Head> */ }
