@@ -93,26 +93,22 @@ export const signUpAction = async (email: string, password: string) => {
       const userID = data.user.id;
       const userEmail = data.user.email; // Use email from Supabase response
 
-      // Create the user in Prisma database.
-      // This happens whether email confirmation is pending or not,
-      // as Supabase has created the user.
+      // Upsert the user in Prisma database.
+      // This ensures that if the email exists, its associated Supabase ID is updated.
+      // If the email doesn't exist, a new user record is created.
+      // This is crucial for re-registration scenarios.
       try {
-         await prisma.user.create({
-            data: { id: userID, email: userEmail }
+         await prisma.user.upsert({
+            where: { email: userEmail }, // Look for an existing user by email
+            update: { id: userID },      // If found, update their id to the new Supabase userID
+            create: { id: userID, email: userEmail }, // If not found, create a new user
          });
+         console.log(`Successfully created user ${userID} in Prisma DB.`);
+         console.log(`[signUpAction] Successfully upserted user ${userID} (${userEmail}) in Prisma DB.`);
       } catch (prismaError: any) {
-         // This could happen if there's a race condition or if the user somehow
-         // already exists in Prisma but not in Supabase (unlikely for a new signup).
-         // Supabase's `auth.signUp` should typically error out if the user (email) already exists on their end.
-         console.error("Error creating user in Prisma DB after Supabase signup:", prismaError);
-         // If it's a unique constraint violation on email or id in Prisma,
-         // it suggests a potential data inconsistency.
-         // For now, we'll let the original Supabase success dictate the outcome,
-         // but this should be logged and investigated.
-         if (prismaError.code !== 'P2002') { // P2002 is unique constraint violation
-            throw new Error("Failed to record user in local database after successful Supabase signup.");
-         }
-         console.warn(`Prisma unique constraint violation for user ${userID}/${userEmail}, but Supabase signup was successful. Continuing.`);
+         // An error here is more serious, as upsert should handle P2002 on email gracefully.
+         console.error(`[signUpAction] Error upserting user ${userID} (${userEmail}) in Prisma DB:`, prismaError);
+         throw new Error("Failed to record or update user in local database after successful Supabase signup.");
       }
       // Check if a session was returned (i.e., user is auto-logged in, email confirmation might be off)
       if (data.session && data.session.access_token) {
