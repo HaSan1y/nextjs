@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "npx prisma generate --schema=./src/db/schema.prisma && next build",
-    "postinstall": "dotenv -e .env.local -- prisma generate --schema=./src/db/schema.prisma && dotenv -e .env.local -- prisma migrate deploy --schema=./src/db/schema.prisma",
     "start": "next start",
     "lint": "next lint",
     "migrate": "dotenv -e .env.local -- npx prisma generate --schema=./src/db/schema.prisma && dotenv -e .env.local -- npx prisma migrate dev --schema=./src/db/schema.prisma",
