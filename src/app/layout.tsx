@@ -1,6 +1,15 @@
 "use client";
 import ClientLayout from "./clientLayout";
 import { Suspense } from "react";
+// import styled from 'styled-components';
+
+// Type declaration for the CSS file
+// declare module '*.css' {
+//    const classes: Record<string, string>;
+//    export default classes;
+// }
+// import styles from '../styles/globals.css';
+import "../styles/globals.css";
 
 type LayoutProps = {
   children: React.ReactNode;

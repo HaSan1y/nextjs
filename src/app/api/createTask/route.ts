@@ -1,41 +1,55 @@
 "use server";
 import { prisma } from "@/db/prisma";
+import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
-import { v4 as uuidv4 } from 'uuid';
+import { cookies } from "next/headers";
 // import type { User } from "@supabase/supabase-js";
 
 export async function POST(request: NextRequest) {
    // const requestBody = await request.body
-   const { userId, title } = await request.json();
-   const generatedId = uuidv4();
+   const { title } = await request.json();
+   const cookieStore = await cookies();
+   const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+         cookies: {
+            getAll() {
+               return cookieStore.getAll();
+            },
+            setAll(cookiesToSet) {
+               cookiesToSet.forEach(({ name, value, options }) => {
+                  cookieStore.set(name, value, options);
+               });
+            },
+         },
+      }
+   );
    try {
+      const {
+         data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const userId = user.id; // 🔥 single source of truth
       if (!title || !userId) {
          return NextResponse.json({ error: null }, { status: 400 });
       }
-
-      // const supabase = await createSupabaseClient();
-      // await supabase.auth.refreshSession();
-      // // const { id } = await prisma.note.create({ data: { authorId: userId, text: "" } });
-      // const { data, error } = await supabase.from('Tasks').insert([
-      //    {
-      //       id: generatedId,
-      //       user_Id: userId,
-      //       title,
-      //       first_name: "Jon",
-      //       last_name: "Do",
-      //       email: "jon.doe@example.com",
-      //       phone: "123-456-789",
-      //       createdAt: new Date().toISOString(),
-      //       updatedAt: new Date().toISOString(),
-      //    },
-      // ]);
-
-      // if (error) {
-      //    return NextResponse.json({ error: error }, { status: 400 });
-      // } else {
+      console.log("AUTH USER:", user?.email);
+      await prisma.user.upsert({
+         where: { id: userId },
+         update: {},
+         create: {
+            id: userId,
+            email: user.email!,
+         },
+      });
+      // id: generatedId,
       const newTask = await prisma.tasks.create({
          data: {
-            id: generatedId,
             user_Id: userId,
             title,
             first_name: "Jon",

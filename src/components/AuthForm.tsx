@@ -102,6 +102,7 @@ function AuthForm({ type }: Props) {
                      type="password"
                      required
                      disabled={isPending}
+                     autoComplete="current-password"
                   />
                </div>
             </CardContent>

@@ -34,7 +34,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next\types/**/*.ts",
-    "src/app/api/logout"
+    "src/app/api/logout",
+    "types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules"

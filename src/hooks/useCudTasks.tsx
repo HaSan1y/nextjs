@@ -145,7 +145,7 @@ function useCudTasks(): CudTasksResult {
             headers: {
                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ userId: session.id, title }),
+            body: JSON.stringify({ title }),
          });
 
          if (!response.ok) {

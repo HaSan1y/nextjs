@@ -1,5 +1,4 @@
 "use client";
-import "@/styles/globals.css";
 
 import { getUser } from "../auth/server";
 import type { User } from '@supabase/auth-js';

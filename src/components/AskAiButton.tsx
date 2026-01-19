@@ -15,7 +15,7 @@ import { Fragment, useRef, useState, useTransition } from "react";
 import { Textarea } from "./ui/textarea";
 import { ArrowUpIcon } from "lucide-react";
 // import { askAIAboutNotesAction } from "@/actions/notes";
-import "@/styles/ai-response.css";
+// import "@/styles/ai-response.css";
 
 type Props = {
    session: User | null;
