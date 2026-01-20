@@ -1,6 +1,6 @@
 export const colors = {
    slate: {
-      50: '#f8fafc',
+      50: '#08fafc',
       100: '#f1f5f9',
       200: '#e2e8f0',
       300: '#cbdbe1',
@@ -24,7 +24,7 @@ export const colors = {
       900: '#7f1d1d',
    },
 }
-const glows = 'rgba(159, 136, 246, 0.3)'
+const glows = 'rgba(059, 136, 246, 0.3)'
 
 export const shadows = {
    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1)',

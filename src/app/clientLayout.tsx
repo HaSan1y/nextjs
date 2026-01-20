@@ -111,14 +111,14 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
                   <SidebarProvider>
                      <div className="flex min-h-screen w-full flex-col relative">
                         <Header />
-                        <AppSidebar />
-                        <SidebarTrigger className="place-self-end" />
+                        {user ? <AppSidebar /> : null}
                         <main className="flex flex-1 flex-col justify-between px-4 pt-10 relative">
+                           <SidebarTrigger className="place-self-end" />
                            {children}
+                           {user ?
+                              <PageTwo />
+                              : (<div>Please log in to see your tasks.</div>)}
                         </main>
-                        {user ?
-                           <PageTwo />
-                           : (<div>Please log in to see your tasks.</div>)}
                      </div>
                   </SidebarProvider >
                   <Toaster />

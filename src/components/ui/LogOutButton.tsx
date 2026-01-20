@@ -71,14 +71,16 @@ function LogOutButton() {
       });
    }
 
-   return (<Link href={`/login`}>
-      <Button variant="outline" onClick={handleClick} disabled={isPending} className="hidden sm:block w-24">
-         {isPending ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-         ) : (
-            <span>Log out</span>
-         )}
-      </Button></Link>
+   return (
+      <Link href={`/login`}>
+         <Button variant="outline" onClick={handleClick} disabled={isPending} className="hidden sm:block w-24">
+            {isPending ? (
+               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+               <span className='text-primary hover:text-primary-foreground'>Log out</span>
+            )}
+         </Button>
+      </Link>
    );
 }
 
