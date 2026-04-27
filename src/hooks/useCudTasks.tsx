@@ -1,9 +1,8 @@
 "use client";
-import { getUser } from '../auth/server';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 // import type { User as PrismaUser } from "@prisma/client";  NO
 // import type { User } from '@supabase/supabase-js';  //NO
-import type { User } from '@supabase/auth-js';  // YES 
+import { useSession } from '@/providers/SessionProvider';
 // interface Users extends PrismaUser {
 //    createdAt: Date;
 //    updatedAt: Date;
@@ -24,26 +23,7 @@ interface CudTasksResult {
 function useCudTasks(): CudTasksResult {
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
-   const [session, setSession] = useState<User | null>(null);
-
-   useEffect(() => {
-      const fetchUser = async () => {
-         try {
-            const currentUser: User | null = await getUser();
-            if (!currentUser) {
-               /*  console.log("unauthenticated, session expired. Redirecting to login..");
-                 //   window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;*/
-               return null;
-            } else if (currentUser) {
-               // } else {
-               setSession(currentUser);
-            }
-         } catch (error) {
-            return console.error("Error fetching user:", error);
-         }
-      };
-      fetchUser();
-   }, []);
+   const { session } = useSession();
    //    if (currentUser) {
    //       setSession({...currentUser, createdAt: new Date(), updatedAt: new Date()})
    //   }

@@ -6,38 +6,11 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import DarkModeToggle from "./DarkmodeToggle";
 import LogOutButton from "./ui/LogOutButton";
-import type { User } from '@supabase/auth-js';
-
-import { useEffect, useState } from "react";
-
-import { getUser } from "./../auth/server";
+import { useSession } from "@/providers/SessionProvider";
 
 const Header = () => {
-   const [session, setSession] = useState<User>();
-   const [loading, setLoading] = useState(true);
-   useEffect(() => {
-      async function fetchSession() {
-         try {
-            const sessionData = await getUser();
-            if (sessionData) {
-               setSession(sessionData);
-            } else {
-               console.log("no session:", sessionData);
-            }
-         } catch (error) {
-            console.log("errhd session:", error);
-         }
-         finally {
-            setLoading(false);
-            // router.push('/login');
-         }
-      }
-      fetchSession();
-   }, []);
+   const { session } = useSession();
 
-   if (loading) {
-      return <div>Loading...</div>;
-   }
    return (
       <header className="bg-popover relative flex h-24 w-full items-center justify-between px-3 sm:px-8"
          style={{

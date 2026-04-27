@@ -1,6 +1,6 @@
 "use server";
 // import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../db/prisma";
+import { prisma } from "../../prisma-custom/prisma";
 import { handleErrors } from "../lib/utils";
 import { /*createCookieClient,*/ getUser } from "../auth/server";
 // import openai from "@/openai";

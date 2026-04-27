@@ -1,6 +1,4 @@
 "use client";
-import dotenv from 'dotenv';
-dotenv.config();
 // import { v4 as uuidv4 } from 'uuid';
 // import { createSupabaseClient, getUser } from '../auth/server';
 // import { useState, useEffect } from "react";

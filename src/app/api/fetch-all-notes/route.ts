@@ -1,6 +1,6 @@
 "use server";
 // import { getUser } from "../../../auth/server";
-import { prisma } from "../../../db/prisma";
+import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import type { Note } from "@prisma/client"
 export async function GET(request: NextRequest) {
@@ -18,11 +18,11 @@ export async function GET(request: NextRequest) {
             orderBy: { updatedAt: "desc" },
          })
 
-      /*   if (!notes || notes.length === 0) {
-            return NextResponse.json({
-               notes: null,
-            }, { status: 401 });
-         }*/
+      if (!notes || notes.length === 0) {
+         return NextResponse.json({
+            notes: null,
+         }, { status: 401 });
+      }
       return NextResponse.json(
          notes,
          { status: 200 });
@@ -31,6 +31,3 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ notes: null }, { status: 500 });
    }
 }
-
-
-

@@ -1,5 +1,5 @@
 "use server";
-import { prisma } from "../../../db/prisma";
+import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
 // import type { Tasks } from "@prisma/client";
 
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
          where: { user_Id: userId },
       });
 
-      if (!tasks) {
+      if (!tasks || tasks.length === 0) {
          return NextResponse.json({ tasks: null }, { status: 500 });
       }
       const serializedTasks = tasks.map(task => ({

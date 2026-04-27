@@ -1,33 +1,21 @@
 "use client";
-import { getUser } from '../auth/server';
-// import type { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from 'react';
-// import type { User } from '@supabase/supabase-js';
-import type { User } from '@supabase/auth-js';
 import { Tasks } from '@prisma/client';
-// import type { Tasks } from '@prisma/client';
+import { useSession } from '@/providers/SessionProvider';
 
 function useLoadTasks() {
-   const [session, setSession] = useState<User | null>(null);
    const [tasks, setTasks] = useState<Tasks[]>([]);
    const [loading, setLoading] = useState(true);
-
-   useEffect(() => {
-      const fetchUser = async () => {
-         const currentUser: User | null = await getUser();
-         if (!currentUser) {
-            /*  console.log("unauthenticated, session expired. Redirecting to login..");
-              //   window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;*/
-            return null;
-         } else {
-            setSession(currentUser);
-         }
-      };
-      fetchUser();
-   }, []);
+   const { session } = useSession();
 
 
    const loadTasks = useCallback(async () => {
+      if (!session) {
+         setTasks([]);
+         setLoading(false);
+         return;
+      }
+
       try {
          const response = await fetch(`/api/retriev-tasks?userId=${session?.id}`);
          // const response = await fetch(`<span class="math-inline">\{process\.env\.NEXT\_PUBLIC\_BASE\_URL\}/api/retriev\-tasks?userId\=</span>{session?.id}`);
@@ -52,6 +40,9 @@ function useLoadTasks() {
    useEffect(() => {
       if (session) {
          loadTasks();
+      } else {
+         setTasks([]);
+         setLoading(false);
       }
    }, [loadTasks, session]);
 

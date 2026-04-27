@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers"
 import { createCookieClient } from "../auth/server"
-import { prisma } from "../db/prisma"
+import { prisma } from "../../prisma-custom/prisma"
 // import { redirect } from "next/navigation"
 // import { handleErrors } from "@/lib/utils"
 

@@ -1,13 +1,11 @@
 "use server";
-import { prisma } from "@/db/prisma";
+import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
 // import type { User } from "@supabase/supabase-js";
 // const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
 //   email: 'kkk@kkk.kk',
 //   password: 'asdfghjk'
 // });
-
-
 
 export async function GET(request: NextRequest) {
    // const response = NextResponse.json({ message: "Hello, world!" });

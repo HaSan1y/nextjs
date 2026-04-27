@@ -1,7 +1,7 @@
 "use server";
 // import { createSupabaseClient } from "@/auth/server";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/db/prisma";
+import { prisma } from "../../../../prisma-custom/prisma";
 // import type { User } from "@supabase/supabase-js";
 
 export async function GET(request: NextRequest) {

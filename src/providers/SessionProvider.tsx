@@ -1,10 +1,5 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-// import type { User } from "@supabase/auth-helpers-nextjs";
-// import type { User } from '@supabase/auth-js';
-// import type { User } from "@prisma/client";
-import { getUser } from "./../auth/server";
-// import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import type { User } from "@supabase/supabase-js";
 
 interface SessionContextType {
@@ -18,38 +13,10 @@ export function SessionProvider({
    children,
    initialSession,
 }: React.PropsWithChildren<{ initialSession: User | null }>) {
-   console.log("SessionProvider is rendering...");
-
    const [session, setSession] = useState<User | null>(initialSession);
-   // const supabase = useSupabaseClient();
-   // const supabase = createPagesBrowserClient();
-   console.log("Supabase client initialized: success");
 
    useEffect(() => {
-      console.log("SessionProvider useEffect is running...");
-      if (!initialSession) {
-         const fetchSession = async () => {
-            try {
-               // const { data, error } = await supabase.auth.getSession();
-               const data = await getUser();
-               if (data) {
-                  setSession(data);
-                  console.log('successful dataset sessprovider');
-               } else {
-                  console.log('err dataset sessprovider not logged in');
-               }
-            } catch (err) {
-               console.error("Error fetching user:", err);
-            }
-            // const currentSession = await getUser();
-            // if (currentSession) {
-            //    setSession(currentSession);
-            // } else {
-            //    console.warn("No user session found");
-            // }
-         };
-         fetchSession();
-      }
+      setSession(initialSession);
    }, [initialSession]);
 
    return (

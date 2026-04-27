@@ -1,5 +1,5 @@
 "use server";
-import { prisma } from "@/db/prisma";
+import { prisma } from "../../../../prisma-custom/prisma";
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
             getAll() {
                return cookieStore.getAll();
             },
-            setAll(cookiesToSet) {
-               cookiesToSet.forEach(({ name, value, options }) => {
+            setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
+               cookiesToSet.forEach(({ name, value, options }: { name: string; value: string; options?: any }) => {
                   cookieStore.set(name, value, options);
                });
             },

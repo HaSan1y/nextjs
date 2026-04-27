@@ -4,13 +4,12 @@
 import NoteTextInput from "../components/NoteTextInput";
 import NewNoteButton from "../components/NewNoteButton";
 import HomeToast from "../components/HomeToast";
-import { getUser } from "../auth/server";
 import { useEffect, useState, useContext, Suspense } from "react";
 // import type { User } from '@supabase/auth-helpers-nextjs';
 // import type { User } from '@supabase/auth-js';
-import type { User } from "@supabase/supabase-js";
 import type { Note } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "@/providers/SessionProvider";
 
 import { NoteProviderContext } from "../providers/NoteProvider";
 import AskAIButton from "@/components/AskAiButton";
@@ -33,7 +32,7 @@ export default function HomePage(/*{ searchParams }: Props*/) {
    // }
 
    const searchParams = useSearchParams();
-   const [session, setSession] = useState<User | null>(null);
+   const { session } = useSession();
    const [note, setNote] = useState<Note | null>(null);
    const [loading, setLoading] = useState(true);
    // const userId = searchParams?.get("userId");
@@ -47,30 +46,12 @@ export default function HomePage(/*{ searchParams }: Props*/) {
    console.log("noteText:", noteText);
 
    useEffect(() => {
-      const fetchUser = async () => {
-         console.log("fetching user");
-         try {
-            const currentUser: User | null = await getUser();
-            if (currentUser) {
-               setSession(currentUser);
-            } else {
-               console.log("unauthenticated, session expired. Redirecting to login..");
-               window.location.href = `/login`;
-            }
+      if (!session) {
+         setLoading(false);
+         return;
+      }
 
-         } catch (error) {
-            console.error("Error fetching user:", error);
-         }
-         finally {
-            setLoading(false);
-         }
-      };
-      fetchUser();
-   }, [loading]);
-
-
-   useEffect(() => {
-      if (session && noteId) {
+      if (noteId) {
          const fetchNotes = async () => {
             try {
                const response = await fetch(`/api/fetch-unique-notes?userId=${session.id}&noteId=${noteId}`);
@@ -91,19 +72,18 @@ export default function HomePage(/*{ searchParams }: Props*/) {
             } catch (error) {
                console.error("Error fetching notes:", error);
             } finally {
-
-               setTimeout(() => {
-                  setLoading(false);
-               }, 1000);
-
+               setLoading(false);
             }
          };
          fetchNotes();
+      } else {
+         setLoading(false);
       }
    }, [noteId, session]);
 
    // console.log('user', userId, 'noteId', noteId, 'note', note, 'task', task);
    if (loading) return (<div>Loading...</div>)
+   if (!session) return <div>Please log in to see your notes.</div>;
    // const searchParams = props.searchParams;
 
    // const user = getUser()

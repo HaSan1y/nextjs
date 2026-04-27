@@ -1,5 +1,5 @@
 "use server";
-import { prisma } from "@/db/prisma";
+import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from 'uuid'; // Import uuidv4
 // import type { User } from "@supabase/supabase-js";

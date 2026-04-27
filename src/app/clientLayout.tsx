@@ -1,6 +1,5 @@
 "use client";
 
-import { getUser } from "../auth/server";
 import type { User } from '@supabase/auth-js';
 // import type { User, createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 // import type { User } from '@supabase/ssr';
@@ -19,37 +18,11 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import NoteProvider from "@/providers/NoteProvider";
 
 type LayoutProps = {
-   children: React.ReactNode;
-   searchParams: {
-      userId?: string;
-      noteId?: string;
-      task?: string;
-      [key: string]: string | string[] | undefined;
-   };
+  children: React.ReactNode;
+  initialSession: User | null;
 };
 // all pages wrapper; suppressHydrationWarning used to prevent hydration errors
-export default function ClientLayout({ children, /* searchParams*/ }: LayoutProps) {
-
-   const [user, setUser] = React.useState<User | null>(null);
-
-   React.useEffect(() => {
-      const fetchUser = async () => {
-         const fetchedUser = await getUser();
-         if (!fetchedUser || fetchedUser === null) {
-            console.log("Failed to retrieve user. not logged in Cookies disabled or session expired..");
-            // Handle the redirect logic on the client side here
-            // You can use the router from next/navigation to redirect
-            // const router = useRouter();
-            // router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
-            // redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
-         } else {
-            setUser(fetchedUser);
-         }
-      };
-
-      fetchUser();
-   }, []);
-
+export default function ClientLayout({ children, initialSession }: LayoutProps) {
    //const searchParams = useSearchParams(); //on client access like so
    // const [session, setsession] = useState<User>();
    // const [tasks, setTasks] = useState<Tasks[]>([]);
@@ -100,7 +73,7 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
    // console.log("user from layout:", user);
    return (
       <AuthProvider>
-         <SessionProvider initialSession={user}>
+         <SessionProvider initialSession={initialSession}>
             <ThemeProvider
                attribute="class"
                defaultTheme="system"
@@ -111,11 +84,11 @@ export default function ClientLayout({ children, /* searchParams*/ }: LayoutProp
                   <SidebarProvider>
                      <div className="flex min-h-screen w-full flex-col relative">
                         <Header />
-                        {user ? <AppSidebar /> : null}
+                        {initialSession ? <AppSidebar /> : null}
                         <main className="flex flex-1 flex-col justify-between px-4 pt-10 relative">
                            <SidebarTrigger className="place-self-end" />
                            {children}
-                           {user ?
+                           {initialSession ?
                               <PageTwo />
                               : (<div>Please log in to see your tasks.</div>)}
                         </main>

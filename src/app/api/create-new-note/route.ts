@@ -1,8 +1,6 @@
 "use server";
-import { prisma } from "../../../db/prisma";
+import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
-
 // import type { User, Note } from "@prisma/client";
 export async function POST(request: NextRequest) {
    const { searchParams } = new URL(request.url);

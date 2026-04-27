@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Tasks" ALTER COLUMN "user_id" SET DATA TYPE TEXT;
