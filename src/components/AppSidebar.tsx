@@ -44,7 +44,7 @@ export default function AppSidebar() {
          }
 
          try {
-            const response = await fetch(`/api/fetch-all-notes?userId=${session.id}`);
+            const response = await fetch(`/api/fetch-all-notes`);
             if (!response.ok) {
                throw new Error(`API request failed with status ${response.status}`);
             }
@@ -79,7 +79,7 @@ export default function AppSidebar() {
    }
 
    return (
-      <Sidebar>
+      <Sidebar variant="floating" className="glass-panel border-0 !bg-transparent">
          <SidebarHeader />
          <SidebarContent /*className="custom-scrollbar"*/>
             <SidebarGroup>
@@ -102,4 +102,3 @@ export default function AppSidebar() {
       </Sidebar >
    )
 }
-// export default AppSidebar;

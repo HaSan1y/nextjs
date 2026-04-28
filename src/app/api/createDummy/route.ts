@@ -1,13 +1,14 @@
-"use server";
+
 import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from 'uuid'; // Import uuidv4
-// import type { User } from "@supabase/supabase-js";
+import { getUser } from "@/auth/server";
 
 export async function POST(request: NextRequest) {
    try {
-      const { userId, title } = await request.json();
-      // const requestBody = await request.body
+      const { title } = await request.json();
+      const user = await getUser();
+      const userId = user?.id;
 
       if (!title || !userId) {
          console.error("Error dumm:");

@@ -1,11 +1,11 @@
-"use server";
+
 import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
-// import type { Tasks } from "@prisma/client";
+import { getUser } from "@/auth/server";
 
 export async function GET(request: NextRequest) {
-   const { searchParams } = new URL(request.url);
-   const userId: string | null = searchParams.get("userId") || "";
+   const user = await getUser();
+   const userId = user?.id;
 
    if (!userId) { return NextResponse.json({ tasks: null }, { status: 400 }); }
    try {

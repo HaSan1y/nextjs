@@ -40,7 +40,7 @@ function useCudTasks(): CudTasksResult {
          // }
          // const supabase = await createSupabaseClient();
          // const { error: supabaseError } = await supabase.from('Tasks').update({ title }).eq('id', id);
-         const response = await fetch(`/api/uptasks?userId=${session?.id}&title=${title}&Id=${id}`, {
+         const response = await fetch(`/api/uptasks?title=${title}&Id=${id}`, {
             method: "GET",
             credentials: "include"
          });
@@ -68,7 +68,7 @@ function useCudTasks(): CudTasksResult {
          // }
          // const supabase = await createSupabaseClient();
          // const { error: supabaseError } = await supabase.from('Tasks').delete().eq('id', id);
-         const response = await fetch(`/api/tasks?userId=${session?.id}&Id=${id}`);
+         const response = await fetch(`/api/tasks?Id=${id}`);
          const { error: supabaseError } = await response.json();
          if (supabaseError) {
             setError(`Error deleting task: ${supabaseError.message}`);

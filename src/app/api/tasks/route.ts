@@ -1,13 +1,15 @@
-"use server";
+
 // import { createSupabaseClient } from "@/auth/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../prisma-custom/prisma";
-// import type { User } from "@supabase/supabase-js";
+import { getUser } from "@/auth/server";
 
 export async function GET(request: NextRequest) {
    const { searchParams } = new URL(request.url);
-   const userId: string | null = searchParams.get("userId") || "";
    const id: string | null = searchParams.get("Id") || "";
+
+   const user = await getUser();
+   const userId = user?.id;
 
    if (!userId || !id) { return NextResponse.json({ error: null }, { status: 400 }); }
    try {

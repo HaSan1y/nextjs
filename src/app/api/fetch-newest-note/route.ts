@@ -1,14 +1,12 @@
-"use server";
-// import { getUser } from "../../../auth/server";
+
 import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { getUser } from "@/auth/server";
 
 export async function GET(request: NextRequest) {
-   const { searchParams } = new URL(request.url);
-   const userId = searchParams.get("userId") || "";
-
-   // const user = await getUser();
-   // const userId = user?.id;
+   const user = await getUser();
+   const userId = user?.id;
+   
    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
    }

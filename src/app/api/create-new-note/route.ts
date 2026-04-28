@@ -1,12 +1,12 @@
-"use server";
+
 import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
-// import type { User, Note } from "@prisma/client";
-export async function POST(request: NextRequest) {
-   const { searchParams } = new URL(request.url);
-   const userId = searchParams.get("userId") || "";
+import { getUser } from "@/auth/server";
 
-   // const session = await getUser();
+export async function POST(request: NextRequest) {
+   const user = await getUser();
+   const userId = user?.id;
+
    if (!userId) {
       return NextResponse.json({ error: null }, { status: 401 });
    }

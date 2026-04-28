@@ -54,7 +54,7 @@ export default function HomePage(/*{ searchParams }: Props*/) {
       if (noteId) {
          const fetchNotes = async () => {
             try {
-               const response = await fetch(`/api/fetch-unique-notes?userId=${session.id}&noteId=${noteId}`);
+               const response = await fetch(`/api/fetch-unique-notes?noteId=${noteId}`);
                if (!response.ok) {
                   console.error("Note not found or invalid note ID");
                   return;

@@ -162,35 +162,31 @@ const PageTwo = () => {
   //       password: 'asdfghjk'
   //     });
 
-  if (loading || bload) return (<div>Loading...</div>)
+  if (loading || bload) return (<div className="flex justify-center items-center h-full text-white animate-pulse">Loading...</div>)
   return (
-    <main className="transparent max-w-md m-auto">
-      <div className="container mx-auto p-2 border-2">
-        <h1 className="text-2xl font-bold text-center">NextJS with Supabase</h1>
+    <main className="transparent max-w-lg w-full mx-auto mt-10">
+      <div className="container mx-auto p-6 glass-panel rounded-3xl border-none">
+        <h1 className="text-3xl font-bold text-center text-white drop-shadow-md mb-8">Tasks Dashboard</h1>
 
-        <form name='addTask' onSubmit={handleCreateTask} className="flex justify-evenly mt-2 mb-3 px-5 gap-1">
-          <input type="text" name="title" placeholder="New Task" required className="border-2 border-slate-800 text-black" />
-          <button type="submit" className="border-2 border-dashed hover:border-slate-800">Add Task</button>
-          {/* <button onClick={() => addDummy()} className="mt-3 border-2 border-dashed border-red-400 hover:text-neutral-700">addDummy</button> */}
+        <form name='addTask' onSubmit={handleCreateTask} className="flex mb-8 gap-3">
+          <input type="text" name="title" placeholder="What needs to be done?" required className="flex-1 rounded-xl px-4 py-3 bg-white/10 dark:bg-black/20 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-white/50 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md shadow-inner transition-all" />
+          <button type="submit" className="rounded-xl px-6 py-3 bg-white/20 hover:bg-white/30 text-slate-800 dark:text-white font-semibold transition-all shadow-lg border border-white/30 backdrop-blur-md">Add</button>
         </form>
 
         {loading ? (
-          <p>Loading tasks...</p>
+          <p className="text-slate-800 dark:text-white/80 text-center animate-pulse">Loading tasks...</p>
         ) : (
-          <div id="task-list" className="space-y-2 border-2">
-            {tasks.length === 0 && <p>No tasks found.</p>}
+          <div id="task-list" className="space-y-4">
+            {tasks.length === 0 && <p className="text-slate-800 dark:text-white/80 text-center italic py-4">No tasks found. Create one!</p>}
             {tasks.map((task) => (
-
-              <div key={task.id + task.title} className="mx-auto bg-black text-white font-extrabold">
-                <span className="mx-auto flex justify-evenly">{task.title}</span>
-                <button onClick={() => handleUpdate(task.id, prompt('New title:', task.title) || task.title)} className="mt-2 w-1/2 border-dotted border-2 border-cyan-700 hover:text-neutral-700">Update Task</button>
-                <button onClick={() => handleDelete(task.id)} className="mt-3 w-1/2 border-2 border-dashed border-red-400 hover:text-neutral-700">Delete Task</button>
-                <button onClick={() => handleCreateDummy(task.title)} className="mt-3 w-1/2 border-2 border-dashed border-red-400 hover:text-neutral-700">create dummy Task</button>
-
-                {loading && <div>Loading...</div>}
-                {error && <div>{error}</div>}
-                {/* <button onClick={() => updateTask(Number(task.id), prompt('New title:', task.title) || task.title)} className="mt-2 w-1/2 border-dotted border-2 border-cyan-700 hover:text-neutral-700">                  Edit                </button>
-            */}
+              <div key={task.id + task.title} className="glass-panel p-5 rounded-2xl text-slate-800 dark:text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:bg-white/30 dark:hover:bg-white/10 group">
+                <span className="block text-xl font-medium mb-4">{task.title}</span>
+                <div className="flex gap-3 opacity-80 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => handleUpdate(task.id, prompt('New title:', task.title) || task.title)} className="flex-1 py-2 rounded-xl bg-white/20 hover:bg-white/40 transition-colors text-sm font-medium border border-white/30 shadow-sm">Update</button>
+                  <button onClick={() => handleDelete(task.id)} className="flex-1 py-2 rounded-xl bg-red-400/30 hover:bg-red-500/50 transition-colors text-sm font-medium border border-red-400/30 shadow-sm">Delete</button>
+                  <button onClick={() => handleCreateDummy(task.title)} className="flex-1 py-2 rounded-xl bg-white/20 hover:bg-white/40 transition-colors text-sm font-medium border border-white/30 shadow-sm">Clone</button>
+                </div>
+                {error && <div className="mt-3 text-red-400 text-sm font-medium">{error}</div>}
               </div>
             ))}
           </div>

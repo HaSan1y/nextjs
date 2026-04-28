@@ -1,14 +1,15 @@
-"use server";
-// import { getUser } from "../../../auth/server";
+
 import { prisma } from "../../../../prisma-custom/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import type { Note } from "@prisma/client";
+import { getUser } from "@/auth/server";
 
 export async function GET(request: NextRequest) {
    const { searchParams } = new URL(request.url);
-   const userId: string | null = searchParams.get("userId") || "";
    const noteId: string = searchParams.get("noteId") || '';
-   // const user = await getUser();Get the current user (e.g., from session)
+   
+   const user = await getUser();
+   const userId = user?.id;
 
    if (!userId || !noteId) {
       return NextResponse.json({ error: null }, { status: 400 });

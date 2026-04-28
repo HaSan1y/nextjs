@@ -13,6 +13,8 @@
 # env files
 .env*
 *.txt
+*.log
+prisma-custom/migrations
 
 # typescript
 *.tsbuildinfo

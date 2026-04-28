@@ -17,7 +17,7 @@ function useLoadTasks() {
       }
 
       try {
-         const response = await fetch(`/api/retriev-tasks?userId=${session?.id}`);
+         const response = await fetch(`/api/retriev-tasks`);
          // const response = await fetch(`<span class="math-inline">\{process\.env\.NEXT\_PUBLIC\_BASE\_URL\}/api/retriev\-tasks?userId\=</span>{session?.id}`);
          const task: Tasks = await response.json();
 

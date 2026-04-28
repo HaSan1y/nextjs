@@ -1,4 +1,3 @@
-"use server";  //must run on server
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -23,17 +22,24 @@ export async function middleware(request: NextRequest) {
       }
    );
 
-   // This is the whole point:
    const {
       data: { user },
    } = await supabase.auth.getUser();
 
-   const isProtectedRoute = request.nextUrl.pathname.startsWith("/app");
+   const isPublicPath = ["/login", "/sign-up"].some(path => request.nextUrl.pathname.startsWith(path));
+   const isApi = request.nextUrl.pathname.startsWith("/api");
 
-   if (isProtectedRoute && !user) {
+   if (!user && !isPublicPath && !isApi) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       return NextResponse.redirect(loginUrl);
+   }
+
+   // Optional: redirect logged-in users away from auth pages
+   if (user && isPublicPath) {
+      const homeUrl = request.nextUrl.clone();
+      homeUrl.pathname = "/";
+      return NextResponse.redirect(homeUrl);
    }
 
    return response;
@@ -43,4 +49,3 @@ export const config = {
       '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
    ],
 };
-
